@@ -31,3 +31,13 @@ captures/
 # OS files
 .DS_Store
 Thumbs.db
+
+
+# Android Studio / IntelliJ files to ignore
+.idea/workspace.xml
+.idea/misc.xml
+.idea/caches/
+.idea/libraries/
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/device-settings.xml
