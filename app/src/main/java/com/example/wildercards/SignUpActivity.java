@@ -1,3 +1,4 @@
+/*
 package com.example.wildercards;
 
 import android.os.Bundle;
@@ -8,16 +9,20 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.EditText;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import android.widget.Toast;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private EditText emailInput, passwordInput, confirmPasswordInput, nameInput;
+    private Button signUpButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,7 +34,7 @@ public class SignUpActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         confirmPasswordInput = findViewById(R.id.confirmPasswordInput);
-        Button signUpButton = findViewById(R.id.signUpButton);
+        signUpButton = findViewById(R.id.signUpButton);
         TextView loginLink = findViewById(R.id.loginLink);
 
         signUpButton.setOnClickListener(v -> {
@@ -38,8 +43,13 @@ public class SignUpActivity extends AppCompatActivity {
             String password = passwordInput.getText().toString().trim();
             String confirmPassword = confirmPasswordInput.getText().toString().trim();
 
-            if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            if (TextUtils.isEmpty(email)){
+                emailInput.setError("Email required");
+                return;
+            }
+
+            if (TextUtils.isEmpty(password)){
+                passwordInput.setError("Password required");
                 return;
             }
 
@@ -51,11 +61,14 @@ public class SignUpActivity extends AppCompatActivity {
             mAuth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Toast.makeText(this, "Account created successfully!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            Toast.makeText(this, "Account created!", Toast.LENGTH_SHORT).show();
+
+                            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+                            startActivity(intent);
                             finish();
-                       } else {
-                            Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
 
@@ -67,4 +80,5 @@ public class SignUpActivity extends AppCompatActivity {
             finish();
         });
     }
+*/
 }

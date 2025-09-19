@@ -1,23 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--<?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Background image -->
+    &lt;!&ndash; Background image &ndash;&gt;
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
         android:src="@drawable/forest_bg" />
 
-    <!-- Dark overlay -->
+    &lt;!&ndash; Dark overlay &ndash;&gt;
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#80000000" />
 
-    <!-- Form -->
+    &lt;!&ndash; Form &ndash;&gt;
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,7 +25,7 @@
         android:gravity="center"
         android:padding="24dp">
 
-        <!-- Name -->
+        &lt;!&ndash; Name &ndash;&gt;
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -40,10 +40,10 @@
                 android:background="@android:color/transparent"
                 android:hint="Name"
                 android:inputType="textPersonName"
-                android:padding="12dp"/>
-        </androidx.cardview.widget.CardView>
+                android:padding="12dp"/>-->
+  <!--      </androidx.cardview.widget.CardView>
 
-        <!-- Email -->
+        &lt;!&ndash; Email &ndash;&gt;
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                 android:padding="12dp"/>
         </androidx.cardview.widget.CardView>
 
-        <!-- Password -->
+        &lt;!&ndash; Password &ndash;&gt;
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,7 +79,7 @@
                 android:padding="12dp"/>
         </androidx.cardview.widget.CardView>
 
-        <!-- Confirm Password -->
+        &lt;!&ndash; Confirm Password &ndash;&gt;
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -114,3 +114,4 @@
             android:layout_marginTop="16dp"/>
     </LinearLayout>
 </FrameLayout>
+-->

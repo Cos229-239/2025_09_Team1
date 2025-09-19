@@ -17,6 +17,8 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="bottom"
         android:background="#80000000" /> <!-- black with 50% opacity -->
 
     <!-- Login UI -->
@@ -38,7 +40,7 @@
                 android:id="@+id/emailInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="16dp"
                 android:background="@android:color/white"
                 android:hint="Wildercards@example.com"
                 android:inputType="textEmailAddress"
@@ -56,7 +58,7 @@
                 android:id="@+id/passwordInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="16dp"
                 android:background="@android:color/white"
                 android:hint="Password"
                 android:inputType="textPassword"
@@ -71,12 +73,42 @@
             android:text="Log In"
             android:textColor="@android:color/white" />
 
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Google login -->
+        <LinearLayout
+            android:id="@+id/customGoogleSignIn"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="12dp"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:contentDescription="Google sign in"
+                app:srcCompat="@drawable/google_icon" />
+
+
+        </LinearLayout>
+
+
+
 
         <TextView
             android:id="@+id/forgotPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
+            android:layout_marginTop="12dp"
             android:text="Forgot password?"
             android:textColor="@android:color/white" />
 

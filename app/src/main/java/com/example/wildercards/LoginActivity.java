@@ -33,10 +33,9 @@ public class LoginActivity extends AppCompatActivity {
         TextView forgotPasswordLink = findViewById(R.id.forgotPassword);
 
         forgotPasswordLink.setOnClickListener( v -> {
+            startActivity(new Intent(LoginActivity.this, ForgotPasswordActivity.class));
 
-                }
-
-                );
+        });
 
 
         loginButton.setOnClickListener(v -> {
