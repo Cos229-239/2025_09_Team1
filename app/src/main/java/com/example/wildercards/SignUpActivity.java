@@ -1,4 +1,3 @@
-/*
 package com.example.wildercards;
 
 import android.os.Bundle;
@@ -80,5 +79,4 @@ public class SignUpActivity extends AppCompatActivity {
             finish();
         });
     }
-*/
 }
