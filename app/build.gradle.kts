@@ -1,3 +1,5 @@
+
+
 plugins {
     alias(libs.plugins.android.application)
     id("com.google.gms.google-services")
@@ -49,6 +51,7 @@ dependencies {
     implementation(libs.cardview)
     implementation(libs.constraintlayout.v214)
     implementation(libs.firebase.bom)
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
 }
 
 

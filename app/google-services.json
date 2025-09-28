@@ -12,7 +12,36 @@
           "package_name": "com.example.wildercards"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "256413269408-5ehnbea4gfilbhqqe0mab4aqu7lqapqj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wildercards",
+            "certificate_hash": "041d80a75cf958ffd4d4601b664a77a72673d92a"
+          }
+        },
+        {
+          "client_id": "256413269408-ks0m4kcjl9uhbs63jvu5rmldkigtu3kk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wildercards",
+            "certificate_hash": "9a4b52382f01d1ffc3c204cb72f64562dd4a2581"
+          }
+        },
+        {
+          "client_id": "256413269408-ptiq6mi8e98dc1aqr1e79t0v8it1ncm0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.wildercards",
+            "certificate_hash": "e1fa8ff20141a77597c74a7bb40e2ddbfa23f933"
+          }
+        },
+        {
+          "client_id": "256413269408-trqt2sc7dk06ao5n0iihc8ac8l13fu1q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAlSDbBjbHqgtqXVFVYSfNkTes9CaVxT_Q"
@@ -20,7 +49,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "256413269408-trqt2sc7dk06ao5n0iihc8ac8l13fu1q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

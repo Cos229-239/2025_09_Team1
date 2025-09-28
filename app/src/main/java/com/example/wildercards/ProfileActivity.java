@@ -26,8 +26,9 @@ public class ProfileActivity extends AppCompatActivity {
             return insets;
         });
         Button signOutBtn = findViewById(R.id.signOutBtn);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         signOutBtn.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
+            mAuth.signOut();
             startActivity(new Intent(ProfileActivity.this, LoginActivity.class));
             finish();
         });
