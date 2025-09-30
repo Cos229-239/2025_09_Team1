@@ -34,7 +34,7 @@ public class BaseActivity extends AppCompatActivity {
             return true;
         });
 
-        highlightCurrentMenuItem();
+       highlightCurrentMenuItem();
     }
 
     private void handleMenuItem(MenuItem item) {
