@@ -38,9 +38,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:hint="Name"
+                android:hint="@string/signup_name_hint"
                 android:inputType="textPersonName"
-                android:padding="12dp"/>-->
+                android:padding="12dp"/>
         </androidx.cardview.widget.CardView>
 
         <!-- Email -->
@@ -56,7 +56,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:hint="Email"
+                android:hint="@string/signup_email_hint"
                 android:inputType="textEmailAddress"
                 android:padding="12dp"/>
         </androidx.cardview.widget.CardView>
@@ -74,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:hint="Password"
+                android:hint="@string/signup_password_hint"
                 android:inputType="textPassword"
                 android:padding="12dp"/>
         </androidx.cardview.widget.CardView>
@@ -92,7 +92,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:hint="Confirm Password"
+                android:hint="@string/signup_confirm_password_hint"
                 android:inputType="textPassword"
                 android:padding="12dp"/>
         </androidx.cardview.widget.CardView>
@@ -101,7 +101,7 @@
             android:id="@+id/signUpButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sign Up"
+            android:text="@string/signup_button_text"
             android:textColor="@android:color/white"
             android:layout_marginTop="16dp"/>
 
@@ -109,7 +109,7 @@
             android:id="@+id/loginLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Already have an account? Log in"
+            android:text="@string/signup_login_link_text"
             android:textColor="@android:color/white"
             android:layout_marginTop="16dp"/>
     </LinearLayout>

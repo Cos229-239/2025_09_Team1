@@ -20,9 +20,9 @@
         <activity
             android:name=".AddImageActivity"
             android:exported="false" />
-        <activity
+       <!-- <activity
             android:name=".ProfileActivity"
-            android:exported="false" />
+            android:exported="false" /> -->
         <activity
             android:name=".SignUpActivity"
             android:exported="true" />
