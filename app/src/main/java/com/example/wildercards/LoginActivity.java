@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
+import com.google.android.material.button.MaterialButton; // Import MaterialButton
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailInput, passwordInput;
     private Button loginButton;
     private TextView signUpText, forgotPasswordText;
-    private LinearLayout googleButton;
+    private MaterialButton googleButton; // Changed to MaterialButton
 
     private static final int RC_SIGN_IN = 9001;
 
@@ -44,9 +44,9 @@ public class LoginActivity extends AppCompatActivity {
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
-        signUpText = findViewById(R.id.signUpLink);       // TextView "Don't have an account? Sign Up"
+        signUpText = findViewById(R.id.signUpLink);
         forgotPasswordText = findViewById(R.id.forgotPassword);
-        googleButton = findViewById(R.id.customGoogleSignIn); // e.g. linear layout holding icon+text
+        googleButton = findViewById(R.id.customGoogleSignIn); // Now correctly finds the MaterialButton
 
         // Email/password login
         loginButton.setOnClickListener(v -> {

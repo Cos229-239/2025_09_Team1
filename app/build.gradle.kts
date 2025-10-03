@@ -1,3 +1,5 @@
+
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,6 +9,7 @@ plugins {
 android {
     namespace = "com.example.wildercards"
     compileSdk = 36
+
 
     defaultConfig {
         applicationId = "com.example.wildercards"
@@ -27,6 +30,10 @@ android {
             )
         }
     }
+
+    buildFeatures{
+        viewBinding = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -46,16 +53,21 @@ dependencies {
     implementation(libs.credentials)
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("org.json:json:20240303")
-    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation(libs.okhttp)
+    implementation(libs.json)
+    implementation(libs.circleimageview)
     implementation(libs.core.ktx)
+    implementation(libs.google.firebase.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.material.v1120)
     implementation(libs.cardview)
     implementation(libs.constraintlayout.v214)
-    implementation(libs.firebase.bom)
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
+    implementation(libs.firebase.bom.v3310)
+    implementation(libs.com.google.firebase.firebase.storage)
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
+    implementation(libs.play.services.auth.v2120)
+    implementation(libs.firebase.firestore)
 }
