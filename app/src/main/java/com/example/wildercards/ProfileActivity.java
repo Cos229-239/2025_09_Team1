@@ -5,34 +5,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-
 import com.bumptech.glide.Glide;
 import com.example.wildercards.databinding.ActivityProfileBinding;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class ProfileActivity extends BaseActivity {
 
@@ -47,7 +31,7 @@ public class ProfileActivity extends BaseActivity {
             result -> {
                 if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null && result.getData().getData() != null) {
                     selectedImageUri = result.getData().getData();
-                    binding.profileImage.setImageURI(selectedImageUri);
+                    Glide.with(this).load(selectedImageUri).into(binding.profileImage);
                 }
             });
 
@@ -71,6 +55,7 @@ public class ProfileActivity extends BaseActivity {
         });
 
         binding.buttonSaveChanges.setOnClickListener(v -> saveUserProfile());
+
         binding.buttonLogout.setOnClickListener(v -> {
             mAuth.signOut();
             Intent intent = new Intent(ProfileActivity.this, LoginActivity.class);
@@ -81,6 +66,100 @@ public class ProfileActivity extends BaseActivity {
     }
 
     private void loadUserProfile(){
+        showLoadingDialog();
+        String userId = (mAuth.getCurrentUser() != null) ? mAuth.getCurrentUser().getUid() : null;
+        if (userId == null) {
+            hideLoadingDialog();
+            Toast.makeText(this, "User is not logged in.", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        firestore.collection("users").document(userId).get()
+                .addOnSuccessListener(document -> {
+                    hideLoadingDialog();
+                    if (document != null && document.exists()) {
+                        binding.textName.setText(document.getString("name"));
+                        binding.textUsername.setText(String.format("@%s", document.getString("username")));
+                        binding.textEmail.setText(String.format("Email: %s", document.getString("email")));
+
+                        binding.editTextName.setText(document.getString("name"));
+                        binding.editTextUsername.setText(document.getString("username"));
+                        binding.editTextEmail.setText(document.getString("email"));
+
+                        if (document.contains("age")) {
+                            Long age = document.getLong("age");
+                            if(age != null){
+                                binding.textAge.setText(String.format("Age: %d", age));
+                                binding.editTextAge.setText(String.valueOf(age));
+                            }
+                        }
+
+                        String imageUrl = document.getString("profileImageUrl");
+                        if (imageUrl != null && !imageUrl.isEmpty()) {
+                            Glide.with(this).load(imageUrl).into(binding.profileImage);
+                        }
+                    } else {
+                        Toast.makeText(this, "Profile not found. Please save your info.", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    hideLoadingDialog();
+                    Toast.makeText(ProfileActivity.this, "Failed to load profile.", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    private void saveUserProfile() {
+        showLoadingDialog();
+        String userId = (mAuth.getCurrentUser() != null) ? mAuth.getCurrentUser().getUid() : null;
+        if (userId == null) {
+            hideLoadingDialog();
+            Toast.makeText(this, "Cannot save, user is not logged in.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (selectedImageUri != null) {
+            StorageReference storageRef = storage.getReference().child("profile_images/" + userId);
+            storageRef.putFile(selectedImageUri)
+                    .addOnSuccessListener(taskSnapshot -> storageRef.getDownloadUrl()
+                            .addOnSuccessListener(downloadUrl -> {
+                                updateFirestoreUser(userId, downloadUrl.toString());
+                            }))
+                    .addOnFailureListener(e -> {
+                        hideLoadingDialog();
+                        Toast.makeText(this, "Image upload failed.", Toast.LENGTH_SHORT).show();
+                    });
+        } else {
+            updateFirestoreUser(userId, null);
+        }
+    }
+
+    private void updateFirestoreUser(String userId, String imageUrl) {
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("name", binding.editTextName.getText().toString().trim());
+        userData.put("username", binding.editTextUsername.getText().toString().trim());
+        userData.put("email", binding.editTextEmail.getText().toString().trim());
+
+        try {
+            userData.put("age", Long.parseLong(binding.editTextAge.getText().toString().trim()));
+        } catch (NumberFormatException e) {
+            // Do not add age if the field is empty or invalid.
+        }
+
+        if (imageUrl != null) {
+            userData.put("profileImageUrl", imageUrl);
+        }
+
+        firestore.collection("users").document(userId)
+                .set(userData, SetOptions.merge())
+                .addOnSuccessListener(aVoid -> {
+                    hideLoadingDialog();
+                    Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
+                    selectedImageUri = null;
+                    loadUserProfile();
+                })
+                .addOnFailureListener(e -> {
+                    hideLoadingDialog();
+                    Toast.makeText(this, "Failed to update profile.", Toast.LENGTH_SHORT).show();
+                });
     }
 }

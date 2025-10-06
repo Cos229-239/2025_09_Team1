@@ -1,10 +1,13 @@
 package com.example.wildercards;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import com.google.android.material.button.MaterialButton; // Import MaterialButton
+import com.google.android.material.textfield.TextInputLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button loginButton;
     private TextView signUpText, forgotPasswordText;
     private MaterialButton googleButton; // Changed to MaterialButton
+    private Dialog mLoadingDialog;
+    private TextInputLayout emailInputLayout;
 
     private static final int RC_SIGN_IN = 9001;
 
@@ -41,12 +46,23 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         // Views - make sure these IDs exist in your layout
+        emailInputLayout = findViewById(R.id.emailInputLayout);
         emailInput = findViewById(R.id.emailInput);
         passwordInput = findViewById(R.id.passwordInput);
         loginButton = findViewById(R.id.loginButton);
         signUpText = findViewById(R.id.signUpLink);
         forgotPasswordText = findViewById(R.id.forgotPassword);
         googleButton = findViewById(R.id.customGoogleSignIn); // Now correctly finds the MaterialButton
+
+        emailInput.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                emailInputLayout.setHint(getString(R.string.email_hint));
+            } else {
+                if (emailInput.getText().toString().isEmpty()) {
+                    emailInputLayout.setHint(getString(R.string.login_email_hint));
+                }
+            }
+        });
 
         // Email/password login
         loginButton.setOnClickListener(v -> {
@@ -58,8 +74,10 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
+            showLoadingDialog();
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
+                        hideLoadingDialog();
                         if (task.isSuccessful()) {
                             goToMain();
                         } else {
@@ -99,6 +117,7 @@ public class LoginActivity extends AppCompatActivity {
                 .build();
 
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, gso);
+        showLoadingDialog();
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN); // deprecated warning ok for now
     }
@@ -107,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        hideLoadingDialog();
 
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
@@ -130,8 +150,10 @@ public class LoginActivity extends AppCompatActivity {
 
     // Exchange Google idToken for Firebase credential
     private void firebaseAuthWithGoogle(String idToken) {
+        showLoadingDialog();
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential).addOnCompleteListener(this, task -> {
+            hideLoadingDialog();
             if (task.isSuccessful()) {
                 goToMain();
             } else {
@@ -143,5 +165,36 @@ public class LoginActivity extends AppCompatActivity {
     private void goToMain() {
         startActivity(new Intent(LoginActivity.this, MainActivity.class));
         finish();
+    }
+
+    private void showLoadingDialog() {
+        if (mLoadingDialog == null) {
+            mLoadingDialog = new Dialog(this);
+            mLoadingDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            mLoadingDialog.setContentView(R.layout.dialog_loading);
+            if (mLoadingDialog.getWindow() != null) {
+                mLoadingDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
+            }
+            mLoadingDialog.setCancelable(false);
+            mLoadingDialog.setCanceledOnTouchOutside(false);
+        }
+        if (!mLoadingDialog.isShowing()) {
+            mLoadingDialog.show();
+        }
+    }
+
+    private void hideLoadingDialog() {
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mLoadingDialog != null && mLoadingDialog.isShowing()) {
+            mLoadingDialog.dismiss();
+        }
+        mLoadingDialog = null;
     }
 }
