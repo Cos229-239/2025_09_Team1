@@ -2,14 +2,12 @@ package com.example.wildercards;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 
 import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -62,28 +60,40 @@ public class BaseActivity extends AppCompatActivity {
     private void handleMenuItem(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
-            openActivity(MainActivity.class);
-        } else if (id == R.id.nav_profile) {
-            openActivity(ProfileActivity.class);
+            openActivityWithAnimation(MainActivity.class, 0);
         } else if (id == R.id.nav_add) {
-            openActivity(AddImageActivity.class);
+            openActivityWithAnimation(AddImageActivity.class, 1);
+        } else if (id == R.id.nav_profile) {
+            openActivityWithAnimation(ProfileActivity.class, 2);
         }
     }
 
-    protected void openActivity(Class<?> activityClass) {
+    protected void openActivityWithAnimation(Class<?> activityClass, int newPosition) {
         if (!this.getClass().equals(activityClass)) {
-            showLoadingDialog();
             Intent intent = new Intent(this, activityClass);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
+            int currentPosition = getCurrentActivityPosition();
+            if (currentPosition != -1) {
+                if (newPosition > currentPosition) {
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                } else {
+                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                }
+            }
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        hideLoadingDialog();
         highlightCurrentMenuItem();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 
     @Override
@@ -93,6 +103,17 @@ public class BaseActivity extends AppCompatActivity {
             mLoadingDialog.dismiss();
         }
         mLoadingDialog = null;
+    }
+
+    private int getCurrentActivityPosition() {
+        if (this instanceof MainActivity) {
+            return 0;
+        } else if (this instanceof AddImageActivity) {
+            return 1;
+        } else if (this instanceof ProfileActivity) {
+            return 2;
+        }
+        return -1;
     }
 
     private void highlightCurrentMenuItem() {
