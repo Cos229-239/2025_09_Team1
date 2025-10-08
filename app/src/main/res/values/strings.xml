@@ -7,7 +7,7 @@
     <string name="login_button_text">Log In</string>
     <string name="google_sign_in_description">Google sign in</string>
     <string name="login_forgot_password">Forgot password?</string>
-    <string name="login_signup_link">Don\'t have an account? Sign Up</string>
+    <string name="login_signup_link">Dont\'t have an account? Sign Up</string>
     <string name="forgot_password_email_hint">Enter your email</string>
     <string name="forgot_password_reset_button">Reset Password</string>
     <string name="signup_title">Sign Up</string>
@@ -25,4 +25,12 @@
     <string name="login_title">Log In</string>
     <string name="login_with_divider">Log in with</string>
     <string name="email_hint">Email</string>
+    <string name="no_image_selected">No image selected</string>
+    <string name="identifying">Identifying...</string>
+    <string name="error_identifying_image">Error identifying image</string>
+    <string name="api_call_failed">API call failed. Check network.</string>
+    <string name="api_error">API Error: %d</string>
+    <string name="identified">Identified: %s</string>
+    <string name="could_not_identify">Could not identify animal.</string>
+    <string name="error_parsing_results">Error parsing results.</string>
 </resources>
