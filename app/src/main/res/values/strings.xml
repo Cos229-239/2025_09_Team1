@@ -33,4 +33,7 @@
     <string name="identified">Identified: %s</string>
     <string name="could_not_identify">Could not identify animal.</string>
     <string name="error_parsing_results">Error parsing results.</string>
+    <string name="confirm_image_title">Confirm Image</string>
+    <string name="selected_image_description">Selected Image</string>
+    <string name="confirm_and_identify_button">Confirm and Identify</string>
 </resources>
