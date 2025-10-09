@@ -22,6 +22,7 @@ public class ImageGenerator {
         try {
             // Build hidden prompt
             String hiddenPrompt = animalName + ", Pokémon card style, hand-drawn but still realistic portrait, shiny holographic effect, clean line art, vibrant colors, high detail, centered composition";
+            // String prompt = animalName + " in the style of a detailed, vibrant Pokémon card, hand-drawn, dynamic lighting, fantasy art, holographic glow";
 
             // URL-encode for Pollinations
             String encodedPrompt = URLEncoder.encode(hiddenPrompt, "UTF-8");

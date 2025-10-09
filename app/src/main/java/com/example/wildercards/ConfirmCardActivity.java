@@ -19,8 +19,10 @@ import androidx.cardview.widget.CardView;
 import com.example.wildercards.ImageGenerator;
 
 
-public class ConfirmImageActivity extends BaseActivity {
-
+public class ConfirmCardActivity extends BaseActivity {
+    private ImageView ivResult;
+    private ProgressBar progressBar;
+    private TextView tvStatus;
 
 
     @Override
@@ -28,6 +30,13 @@ public class ConfirmImageActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_image);
 
+        ivResult = findViewById(R.id.ivResult);
+        progressBar = findViewById(R.id.progressBar);
+        tvStatus = findViewById(R.id.tvStatus);
+
+        // Example
+        String animalName = "cat";
+        ImageGenerator.generateAnimalImage(this, animalName, ivResult, progressBar, tvStatus);
     }
 
 

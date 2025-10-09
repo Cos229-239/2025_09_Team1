@@ -43,7 +43,7 @@ public class BaseActivity extends AppCompatActivity {
         } else if (id == R.id.nav_profile) {
             openActivity(ProfileActivity.class);
         } else if (id == R.id.nav_add) {
-            openActivity(ConfirmImageActivity.class);
+            openActivity(AddImageActivity.class);
         }
     }
 
@@ -60,7 +60,7 @@ public class BaseActivity extends AppCompatActivity {
             bottomNavigationView.setSelectedItemId(R.id.nav_home);
         } else if (this instanceof ProfileActivity) {
             bottomNavigationView.setSelectedItemId(R.id.nav_profile);
-        } else if (this instanceof ConfirmImageActivity) {
+        } else if (this instanceof AddImageActivity) {
             bottomNavigationView.setSelectedItemId(R.id.nav_add);
         }
     }
