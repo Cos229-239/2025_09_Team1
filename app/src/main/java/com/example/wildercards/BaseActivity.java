@@ -1,4 +1,3 @@
-// java/.../BaseActivity.java
 package com.example.wildercards;
 
 import android.content.Intent;
@@ -44,7 +43,7 @@ public class BaseActivity extends AppCompatActivity {
         } else if (id == R.id.nav_profile) {
             openActivity(ProfileActivity.class);
         } else if (id == R.id.nav_add) {
-            openActivity(AddImageActivity.class);
+            openActivity(ConfirmImageActivity.class);
         }
     }
 
@@ -61,7 +60,7 @@ public class BaseActivity extends AppCompatActivity {
             bottomNavigationView.setSelectedItemId(R.id.nav_home);
         } else if (this instanceof ProfileActivity) {
             bottomNavigationView.setSelectedItemId(R.id.nav_profile);
-        } else if (this instanceof AddImageActivity) {
+        } else if (this instanceof ConfirmImageActivity) {
             bottomNavigationView.setSelectedItemId(R.id.nav_add);
         }
     }

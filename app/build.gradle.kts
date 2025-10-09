@@ -1,10 +1,27 @@
+import org.gradle.kotlin.dsl.annotationProcessor
+
+//plugins {
+//    alias(libs.plugins.android.application)
+//    id("com.android.application")
+//    id("org.jetbrains.kotlin.android")
+//    id("kotlin-kapt")
+//}
+
 plugins {
-    alias(libs.plugins.android.application)
+    id("com.android.application")
+    id("org.jetbrains.kotlin.android")
 }
+
+
+
 
 android {
     namespace = "com.example.wildercards"
     compileSdk = 36
+
+    buildFeatures {
+        buildConfig = true
+    }
 
     defaultConfig {
         applicationId = "com.example.wildercards"
@@ -14,6 +31,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "DEEPAI_API_KEY", "\"4e006901-a82f-4f28-8491-a037ee4d8aa2\"")
+
+
     }
 
     buildTypes {
@@ -32,6 +52,10 @@ android {
 }
 
 dependencies {
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("androidx.core:core-ktx:1.12.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+
 
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -54,6 +78,10 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    // implementation("com.github.bumptech.glide:glide:4.16.0")
+
+    // implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.10.1")
+
 }
 

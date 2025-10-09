@@ -1,24 +1,43 @@
 package com.example.wildercards;
 
 import android.os.Bundle;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.widget.Toast;
 
-public class ConfirmImageActivity extends AppCompatActivity {
+import androidx.cardview.widget.CardView;
+
+import com.example.wildercards.ImageGenerator;
+
+
+public class ConfirmImageActivity extends BaseActivity {
+    private ImageView ivResult;
+    private ProgressBar progressBar;
+    private TextView tvStatus;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_confirm_image);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        ivResult = findViewById(R.id.ivResult);
+        progressBar = findViewById(R.id.progressBar);
+        tvStatus = findViewById(R.id.tvStatus);
+
+        // Example usage:
+        String animalName = "cat";  // or get from intent, etc.
+        ImageGenerator.generateAnimalImage(this, animalName, ivResult, progressBar, tvStatus);
     }
+
+
 }
