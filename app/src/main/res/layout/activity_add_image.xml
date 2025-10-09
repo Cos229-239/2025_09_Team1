@@ -57,7 +57,7 @@
         android:id="@+id/btnTakePhoto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Takw a photo"
+        android:text="Take a photo"
         android:textAllCaps="false"
         android:textStyle="bold"
         android:textColor="@color/white"
@@ -66,5 +66,13 @@
         android:layout_marginBottom="16dp"
         android:padding="12dp"
         app:rippleColor="@android:color/darker_gray"/>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginBottom="16dp"
+        android:scaleType="centerCrop" />
+<!--        //android:visibility="gone" />-->
 
 </LinearLayout>
