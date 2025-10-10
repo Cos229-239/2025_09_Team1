@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -192,16 +193,23 @@ public class AddImageActivity extends BaseActivity {
             InputStream inputStream = getContentResolver().openInputStream(imageUri);
             selectedImageBitmap = BitmapFactory.decodeStream(inputStream);
 
-            // Display image if you have an ImageView
+            Log.d("AddImage", "handleSelectedImage: bitmap decoded");
+
             imageView.setImageBitmap(selectedImageBitmap);
 
+            // Display image if you have an ImageView
+            // imageView.setImageBitmap(selectedImageBitmap);
+
             // Optional: Save to gallery if needed
-            saveImageToGallery(selectedImageBitmap);
+            // saveImageToGallery(selectedImageBitmap);
 
             Toast.makeText(this, "Image selected successfully", Toast.LENGTH_SHORT).show();
 
+            openConfirmActivity();
             // Return the image URI or bitmap to calling activity if needed
-            returnImageResult();
+            // returnImageResult();
+
+            Log.d("AddImage", "handleSelectedImage: called openConfirmActivity");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -329,12 +337,12 @@ public class AddImageActivity extends BaseActivity {
         if (saved) {
             Toast.makeText(this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
             selectedImageBitmap = bitmap;
-
+            // openConfirmActivity();
             // Display image if you have an ImageView
-            imageView.setImageBitmap(bitmap);
+            // imageView.setImageBitmap(bitmap);
 
             // Return the result
-            returnImageResult();
+            // returnImageResult();
         } else {
             Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
         }
@@ -387,29 +395,44 @@ public class AddImageActivity extends BaseActivity {
 
     // ========== RETURN RESULT ==========
 
+//    private void returnImageResult() {
+//        // If this activity was started for result, return the image
+//        Intent resultIntent = new Intent();
+//
+//        if (selectedImageUri != null) {
+//            resultIntent.putExtra("image_uri", selectedImageUri.toString());
+//        }
+//
+//        if (currentPhotoPath != null) {
+//            resultIntent.putExtra("image_path", currentPhotoPath);
+//        }
+//
+//        // You can also pass the bitmap as byte array (be careful with size)
+//        // ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        // selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
+//        // byte[] byteArray = stream.toByteArray();
+//        // resultIntent.putExtra("image_bitmap", byteArray);
+//
+//        setResult(RESULT_OK, resultIntent);
+//
+//        // Don't finish the activity automatically unless you want to
+//        // finish();
+//    }
+
     private void returnImageResult() {
-        // If this activity was started for result, return the image
-        Intent resultIntent = new Intent();
+        Intent confirmIntent = new Intent(this, ConfirmImageActivity.class);
 
         if (selectedImageUri != null) {
-            resultIntent.putExtra("image_uri", selectedImageUri.toString());
+            confirmIntent.putExtra("image_uri", selectedImageUri.toString());
         }
 
         if (currentPhotoPath != null) {
-            resultIntent.putExtra("image_path", currentPhotoPath);
+            confirmIntent.putExtra("image_path", currentPhotoPath);
         }
 
-        // You can also pass the bitmap as byte array (be careful with size)
-        // ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        // selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
-        // byte[] byteArray = stream.toByteArray();
-        // resultIntent.putExtra("image_bitmap", byteArray);
-
-        setResult(RESULT_OK, resultIntent);
-
-        // Don't finish the activity automatically unless you want to
-        // finish();
+        startActivity(confirmIntent);
     }
+
 
     // ========== PERMISSION HANDLING ==========
 
@@ -428,6 +451,27 @@ public class AddImageActivity extends BaseActivity {
         builder.setNegativeButton("Cancel", null);
         builder.show();
     }
+
+    private void openConfirmActivity() {
+        Log.d("AddImage", "openConfirmActivity: selectedImageUri = " + selectedImageUri
+                + ", currentPhotoPath = " + currentPhotoPath);
+
+        Intent confirmIntent = new Intent(this, ConfirmImageActivity.class);
+
+        if (selectedImageUri != null) {
+            confirmIntent.putExtra("image_uri", selectedImageUri.toString());
+            Log.d("AddImage", "openConfirmActivity: put image_uri extra");
+        }
+
+        if (currentPhotoPath != null) {
+            confirmIntent.putExtra("image_path", currentPhotoPath);
+            Log.d("AddImage", "openConfirmActivity: put image_path extra");
+        }
+
+        startActivity(confirmIntent);
+        Log.d("AddImage", "openConfirmActivity: startActivity called");
+    }
+
 
     // ========== PUBLIC METHODS TO GET IMAGE ==========
 
