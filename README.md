@@ -6,11 +6,10 @@ This mobile application allows users to take or upload a photo of an animal and 
 ## Key Features
 - User login/signup with Firebase
 - Image upload or camera capture
-- Python-powered animal recognition
 - Dynamic card generation with species info from database
 - Mobile-friendly, interactive UI
 
 ## Tech Stack
 - **Frontend:** Android Studio (Java/XML)
 - **Backend & Database:** Firebase (Auth + Firestore)
-- **Image Recognition:** Python 
+- **Image Recognition:** Java 
