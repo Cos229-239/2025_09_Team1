@@ -2,6 +2,7 @@ package com.example.wildercards;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -36,6 +37,7 @@ public class ConfirmImageActivity extends AppCompatActivity {
     private static final String TAG = "ConfirmImageActivity";
     private static final String INATURALIST_API_URL = "https://api.inaturalist.org/v1/computervision/score_image";
 
+    private ImageView confirmImageView;
     private ImageView ivSelectedImage;
     private Button btnConfirm;
     private Uri imageUri;
@@ -46,18 +48,44 @@ public class ConfirmImageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_image);
 
+        Log.d("ConfirmImage", "onCreate: called");
+
         ivSelectedImage = findViewById(R.id.ivSelectedImage);
         btnConfirm = findViewById(R.id.btnConfirm);
 
-        String uriString = getIntent().getStringExtra("imageUri");
-        if (uriString != null) {
-            imageUri = Uri.parse(uriString);
-            ivSelectedImage.setImageURI(imageUri);
-        } else {
-            Log.e(TAG, "Image URI was null. Cannot display image.");
-            Toast.makeText(this, getString(R.string.no_image_selected), Toast.LENGTH_SHORT).show();
-            finish();
+
+        confirmImageView = findViewById(R.id.ivSelectedImage);
+
+        Intent intent = getIntent();
+        String imageUriString = intent.getStringExtra("image_uri");
+        String imagePath = intent.getStringExtra("image_path");
+
+
+        Log.d("ConfirmImage", "onCreate: extras: image_uri = " + imageUriString
+                + ", image_path = " + imagePath);
+
+        if (imageUriString != null) {
+            Uri imageUri = Uri.parse(imageUriString);
+            confirmImageView.setImageURI(imageUri);
+            Log.d("ConfirmImage", "onCreate: setImageURI");
+        } else if (imagePath != null) {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            confirmImageView.setImageBitmap(bitmap);
+            Log.d("ConfirmImage", "onCreate: setImageBitmap from path");
+        }else {
+            Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
+            Log.d("ConfirmImage", "onCreate: no image selected");
         }
+
+//        String uriString = getIntent().getStringExtra("imageUri");
+//        if (uriString != null) {
+//            imageUri = Uri.parse(uriString);
+//            ivSelectedImage.setImageURI(imageUri);
+//        } else {
+//            Log.e(TAG, "Image URI was null. Cannot display image.");
+//            Toast.makeText(this, getString(R.string.no_image_selected), Toast.LENGTH_SHORT).show();
+//            finish();
+//        }
 
         btnConfirm.setOnClickListener(v -> {
             if (imageUri != null) {
@@ -152,6 +180,8 @@ public class ConfirmImageActivity extends AppCompatActivity {
                     });
                 }
             }
+
+
         });
     }
 }
