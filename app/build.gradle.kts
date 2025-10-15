@@ -13,9 +13,6 @@ plugins {
     id("com.google.gms.google-services")
 }
 
-
-
-
 android {
     namespace = "com.example.wildercards"
     compileSdk = 36
@@ -85,11 +82,17 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.json)
 
+
+    // firebase bom
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+
+
+
     implementation(libs.circleimageview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(libs.material.v1120)
     implementation(libs.cardview)
     implementation(libs.constraintlayout.v214)
     implementation(platform(libs.firebase.bom.v3310))

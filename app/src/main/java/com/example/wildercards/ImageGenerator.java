@@ -1,6 +1,7 @@
 package com.example.wildercards;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -15,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class ImageGenerator {
+    private static String lastGeneratedImageUrl = "";
 
     public static void generateAnimalImage(Context context,
                                            String animalName,
@@ -40,6 +42,8 @@ public class ImageGenerator {
             // Pollinations endpoint with seed parameter to generate different images
             String url = "https://image.pollinations.ai/prompt/" + encodedPrompt +
                     "?width=512&height=512&model=flux&nologo=true&enhance=true&seed=" + seed;
+
+            lastGeneratedImageUrl = url;
 
             // Update UI
             progressBar.setVisibility(View.VISIBLE);
@@ -103,4 +107,9 @@ public class ImageGenerator {
 
         return sanitized;
     }
+
+    public static String getLastGeneratedImageUrl() {
+        return lastGeneratedImageUrl;
+    }
+
 }

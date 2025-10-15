@@ -24,9 +24,15 @@ public class ConfirmCardActivity extends BaseActivity {
     private ImageView ivResult;
     private ProgressBar progressBar;
     private TextView tvStatus;
+    private TextView tvAnimalName;
+    private TextView tvDescription;
+    private Button btnSave;
 
-    private String currentAnimalName = "Tiger";
 
+    private String currentAnimalName = "Northern cardinal";
+    private String currentDescription = "A beautiful red bird found in North America";
+
+    private FirebaseHelper firebaseHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,11 +42,29 @@ public class ConfirmCardActivity extends BaseActivity {
         ivResult = findViewById(R.id.ivResult);
         progressBar = findViewById(R.id.progressBar);
         tvStatus = findViewById(R.id.tvStatus);
-
+        tvAnimalName = findViewById(R.id.tvResultLabel);
+        tvDescription = findViewById(R.id.tvDescriptionLabel);
+        btnSave = findViewById(R.id.btn_save);
         setupRetryButton();
 
         // Generate initial image
         generateImage();
+
+        firebaseHelper = new FirebaseHelper();
+
+        // Set animal name and description
+        tvAnimalName.setText(currentAnimalName);
+        tvDescription.setText(currentDescription);
+
+        // Generate initial image
+        ImageGenerator.generateAnimalImage(this, currentAnimalName, ivResult, progressBar, tvStatus);
+
+
+        // Save button
+        btnSave.setOnClickListener(v -> {
+            saveCardToFirebase();
+        });
+
 
         // Example
         //String animalName = "Northern cardinal";
@@ -73,5 +97,47 @@ public class ConfirmCardActivity extends BaseActivity {
             }
         });
     }
+
+    private void saveCardToFirebase() {
+        // Get the image URL from ImageGenerator
+        String imageUrl = ImageGenerator.getLastGeneratedImageUrl();
+
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            Toast.makeText(this, "Please generate an image first!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Disable button while saving
+        btnSave.setEnabled(false);
+        btnSave.setText("Saving...");
+
+        // Get current values
+        String animalName = tvAnimalName.getText().toString();
+        String description = tvDescription.getText().toString();
+
+        // Save to Firebase (just the URL, no image upload needed!)
+        firebaseHelper.saveAnimalCard(
+                this,
+                animalName,
+                description,
+                imageUrl,  // ✅ Pass the URL directly
+                new FirebaseHelper.SaveCallback() {
+                    @Override
+                    public void onSuccess(String cardId) {
+                        btnSave.setEnabled(true);
+                        btnSave.setText("Save Collection");
+                        Toast.makeText(ConfirmCardActivity.this, "Card saved! ✓", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onFailure(String error) {
+                        btnSave.setEnabled(true);
+                        btnSave.setText("Save Collection");
+                        Toast.makeText(ConfirmCardActivity.this, "Save failed: " + error, Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+    }
+
 
 }
