@@ -32,7 +32,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class ConfirmImageActivity extends AppCompatActivity {
+public class ConfirmImageActivity extends BaseActivity {
 
     private static final String TAG = "ConfirmImageActivity";
     private static final String INATURALIST_API_URL = "https://api.inaturalist.org/v1/computervision/score_image";

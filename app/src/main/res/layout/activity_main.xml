@@ -24,146 +24,179 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
 
-        <!-- Top card -->
+
+        <TextView
+            android:id="@+id/topCardText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Your top card"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"/>
+        <!-- Top card - FIX: Shows last saved card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/topCard"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="350dp"
             android:layout_marginBottom="24dp"
             app:cardCornerRadius="12dp"
             app:cardBackgroundColor="@color/colorSecondary"
             app:cardElevation="4dp"
             app:strokeWidth="0dp">
 
+            <!-- FIX: Add ImageView to show the last card's image -->
+            <ImageView
+                android:id="@+id/topCardImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:contentDescription="Top card image" />
+
+            <!-- FIX: Placeholder text (will be hidden when image loads) -->
             <TextView
+                android:id="@+id/topCardPlaceholder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Your top card"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"/>
+
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Top cards row title -->
-        <LinearLayout
+        <!-- Top card section above remains the same -->
+
+        <!-- Top cards row title -->
+        <!-- Top cards row title -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:text="Top cards"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"/>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Top cards >"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
-        </LinearLayout>
+        <!-- Animals horizontal scrolling list -->
 
-        <!-- Top cards row -->
-        <LinearLayout
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/animalsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_marginBottom="24dp"
-            app:layout_constraintHorizontal_chainStyle="spread_inside">
-            <!-- Repeatable item -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="10dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeWidth="0dp"/>
+            android:clipToPadding="false"
+            android:paddingStart="0dp"
+            android:paddingEnd="16dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+        <!-- Your collections section below remains the same -->
+        <!-- Top cards row - UNCHANGED (we'll leave this for now) -->
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:layout_marginBottom="24dp"-->
+<!--            app:layout_constraintHorizontal_chainStyle="spread_inside">-->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="10dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeWidth="0dp"/>
+<!--            &lt;!&ndash; Repeatable item &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:orientation="vertical">-->
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="70dp"-->
+<!--                    android:layout_height="70dp"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    app:cardBackgroundColor="@color/colorSecondary"-->
+<!--                    app:cardElevation="2dp"-->
+<!--                    app:shapeAppearanceOverlay="@style/CircleImage"-->
+<!--                    app:strokeWidth="0dp"/>-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:text="Title"-->
+<!--                    android:textColor="@android:color/white"-->
+<!--                    android:textSize="12sp" />-->
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="10dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeWidth="0dp"/>
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:orientation="vertical">-->
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="70dp"-->
+<!--                    android:layout_height="70dp"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    app:cardBackgroundColor="@color/colorSecondary"-->
+<!--                    app:cardElevation="2dp"-->
+<!--                    app:shapeAppearanceOverlay="@style/CircleImage"-->
+<!--                    app:strokeWidth="0dp"/>-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:text="Title"-->
+<!--                    android:textColor="@android:color/white"-->
+<!--                    android:textSize="12sp" />-->
+<!--            </LinearLayout>-->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="10dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeWidth="0dp"/>
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:orientation="vertical">-->
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="70dp"-->
+<!--                    android:layout_height="70dp"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    app:cardBackgroundColor="@color/colorSecondary"-->
+<!--                    app:cardElevation="2dp"-->
+<!--                    app:shapeAppearanceOverlay="@style/CircleImage"-->
+<!--                    app:strokeWidth="0dp"/>-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:text="Title"-->
+<!--                    android:textColor="@android:color/white"-->
+<!--                    android:textSize="12sp" />-->
+<!--            </LinearLayout>-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:orientation="vertical">-->
+<!--                <com.google.android.material.card.MaterialCardView-->
+<!--                    android:layout_width="70dp"-->
+<!--                    android:layout_height="70dp"-->
+<!--                    android:layout_margin="10dp"-->
+<!--                    app:cardBackgroundColor="@color/colorSecondary"-->
+<!--                    app:cardElevation="2dp"-->
+<!--                    app:shapeAppearanceOverlay="@style/CircleImage"-->
+<!--                    app:strokeWidth="0dp"/>-->
+
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="4dp"-->
+<!--                    android:text="Title"-->
+<!--                    android:textColor="@android:color/white"-->
+<!--                    android:textSize="12sp" />-->
+<!--            </LinearLayout>-->
+
+<!--        </LinearLayout>-->
 
 
-        </LinearLayout>
+
 
         <!-- Your collections row title -->
         <LinearLayout
@@ -171,9 +204,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="20dp">
 
             <TextView
+                android:id="@+id/collections"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -183,126 +218,19 @@
                 android:textStyle="bold"/>
         </LinearLayout>
 
-        <!-- Your Collections row -->
+
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:overScrollMode="never"
             android:scrollbars="none">
 
+            <!-- FIX: This LinearLayout will be populated dynamically -->
             <LinearLayout
+                android:id="@+id/collectionsContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <!-- Example collection card -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="120dp"
-                    android:layout_height="160dp"
-                    android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
-
-
-
-
-                </com.google.android.material.card.MaterialCardView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Brand"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="2dp"
-                    android:textSize="10sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Card name"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:layout_marginLeft="2dp"/>
-            </LinearLayout>
-                <!-- Repeat more cards as needed -->
-
-                <!-- Example collection card -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="120dp"
-                        android:layout_height="160dp"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardBackgroundColor="@color/colorSecondary"
-                        app:cardElevation="2dp"
-                        app:strokeWidth="0dp">
-
-                    </com.google.android.material.card.MaterialCardView>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Brand"
-                        android:textColor="@android:color/white"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="2dp"
-                        android:textSize="10sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Card name"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:layout_marginLeft="2dp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="120dp"
-                        android:layout_height="160dp"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardBackgroundColor="@color/colorSecondary"
-                        app:cardElevation="2dp"
-                        app:strokeWidth="0dp">
-
-                    </com.google.android.material.card.MaterialCardView>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Brand"
-                        android:textColor="@android:color/white"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="2dp"
-                        android:textSize="10sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Card name"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:layout_marginLeft="2dp"/>
-                </LinearLayout>
-
 
             </LinearLayout>
         </HorizontalScrollView>
