@@ -68,6 +68,7 @@ public class ImageGenerator {
                         @Override
                         public void onLoadFailed(android.graphics.drawable.Drawable errorDrawable) {
                             super.onLoadFailed(errorDrawable);
+                            Log.e("ImageGenerator", "Failed to load image from: " + url);
                             progressBar.setVisibility(View.GONE);
                             imageView.setVisibility(View.VISIBLE);
                             statusText.setText("Failed to generate. Tap to retry.");

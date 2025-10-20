@@ -57,10 +57,9 @@ android {
 }
 
 dependencies {
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("androidx.core:core-ktx:1.12.0")
+   // implementation("com.github.bumptech.glide:glide:4.16.0")
+   // implementation("androidx.core:core-ktx:1.12.0")
     annotationProcessor(libs.compiler)
-
 
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -71,49 +70,82 @@ dependencies {
     implementation(libs.credentials.play.services.auth)
     implementation(libs.googleid)
     implementation(libs.okhttp)
-    implementation(libs.json)
     implementation(libs.circleimageview)
     implementation(libs.core.ktx)
     implementation(libs.google.firebase.storage)
 //    implementation("com.google.android.material:material:1.12.0")
     implementation(libs.cardview)
-    implementation(libs.constraintlayout.v214)
+    // implementation(libs.constraintlayout.v214)
 
-    implementation(libs.okhttp)
     implementation(libs.json)
-
 
     // firebase bom
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.firestore)
 
 
-
-    implementation(libs.circleimageview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(libs.cardview)
-    implementation(libs.constraintlayout.v214)
-    implementation(platform(libs.firebase.bom.v3310))
+    // implementation(libs.constraintlayout.v214)
+    // implementation(platform(libs.firebase.bom.v3310))
     implementation(libs.com.google.firebase.firebase.storage)
     implementation(libs.glide)
-    annotationProcessor(libs.compiler)
     implementation(libs.play.services.auth.v2120)
     implementation(libs.firebase.firestore)
 //    implementation("androidx.core:core-ktx:1.x.x")
 //    implementation("androidx.appcompat:appcompat:1.x.x")
 
-    implementation(libs.core.ktx.v1120)
-    implementation(libs.appcompat.v161)
-    implementation(libs.glide.v4160)
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
+    //implementation(libs.core.ktx.v1120)
+    // implementation(libs.appcompat.v161)
+    // implementation(libs.glide.v4160)
+    // implementation("androidx.core:core-ktx:1.12.0")
+    //implementation("androidx.appcompat:appcompat:1.6.1")
+    // implementation("com.google.android.material:material:1.11.0")
     // implementation("com.github.bumptech.glide:glide:4.16.0")
 
     // implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.google.code.gson:gson:2.10.1")
+    // gson
+
+
     // implementation("androidx.cardview:cardview:1.0.0")
 
+   // implementation 'com.github.bumptech.glide:glide:4.15.1'
+    //implementation("com.github.bumptech.glide:glide:4.15.1")
+
+
+    // annotationProcessor 'com.github.bumptech.glide:compiler:4.15.1'
+
 }
+
+//dependencies {
+//    // Core Android
+//    implementation("androidx.core:core-ktx:1.12.0")
+//    implementation("androidx.appcompat:appcompat:1.6.1")
+//    implementation("com.google.android.material:material:1.11.0")
+//    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+//    implementation("androidx.cardview:cardview:1.0.0")
+//
+//    // Firebase (already managed with BOM)
+//    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+//    implementation("com.google.firebase:firebase-auth")
+//    implementation("com.google.firebase:firebase-firestore")
+//    implementation("com.google.firebase:firebase-storage")
+//
+//    // Networking + JSON
+//    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+//    implementation("com.google.code.gson:gson:2.10.1")
+//    implementation(libs.play.services.auth.v2120)
+//
+//    // Glide for images
+//    implementation("com.github.bumptech.glide:glide:4.15.1")
+//    annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
+//
+//    // UI Extras
+//    implementation("de.hdodenhof:circleimageview:3.1.0")
+//
+//    // Testing
+//    testImplementation("junit:junit:4.13.2")
+//    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+//    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+//}

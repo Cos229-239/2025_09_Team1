@@ -6,15 +6,22 @@ public class AnimalCard {
     private String imageUrl;
     private long timestamp;
     private String cardId;
+    private String sciName;
+    private String habitat;
+    private String conservation;
+
 
     // Empty constructor needed for Firestore
     public AnimalCard() {
     }
 
-    public AnimalCard(String animalName, String description, String imageUrl) {
+    public AnimalCard(String animalName, String description, String imageUrl, String sciName, String habitat, String conservation) {
         this.animalName = animalName;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.sciName = sciName;
+        this.habitat = habitat;
+        this.conservation = conservation;
         this.timestamp = System.currentTimeMillis();
     }
 
@@ -58,4 +65,31 @@ public class AnimalCard {
     public void setCardId(String cardId) {
         this.cardId = cardId;
     }
+
+    public String getSciName() {
+        return sciName;
+    }
+
+    public void setSciName(String sciName) {
+        this.sciName = sciName;
+    }
+
+    public String getHabitat() {
+        return habitat;
+    }
+
+    public void setHabitat(String habitat) {
+        this.habitat = habitat;
+    }
+
+
+    public String getConservation() {
+        return conservation;
+    }
+
+    public void setConservation(String conservation) {
+        this.conservation = conservation;
+    }
+
+
 }

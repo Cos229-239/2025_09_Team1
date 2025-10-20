@@ -11,17 +11,40 @@
         android:layout_height="match_parent"
         android:layout_marginBottom="10dp" />
 
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/white"
-        app:itemTextColor="@color/white"
         android:background="@color/colorSecondary"
-        />
+        app:itemIconTint="@color/colorHighlight"
+        app:itemTextColor="@color/colorHighlight"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        app:layout_anchor="@+id/content_frame"
+        style="@style/BottomNavStyle"
+        app:layout_anchorGravity="bottom|center"
+        app:labelVisibilityMode="unlabeled"
+        app:itemRippleColor="@android:color/transparent"
+        app:itemActiveIndicatorStyle="@null"
+        app:menu="@menu/bottom_nav_menu" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/nav_add"
+        style="@style/CircularFAB"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="60dp"
+        android:src="@drawable/ic_plus"
+        app:backgroundTint="#169447"
+        app:borderWidth="0dp"
+        app:elevation="10dp"
+        app:fabCustomSize="64dp"
+        app:layout_anchor="@+id/bottom_navigation"
+        app:layout_anchorGravity="top|center"
+        app:maxImageSize="32dp"
+        app:tint="@color/white" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

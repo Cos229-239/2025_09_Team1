@@ -34,7 +34,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:name=".MyApplication"
-        android:theme="@style/Theme.WilderCards">
+        android:theme="@style/Theme.WilderCards"
+        android:usesCleartextTraffic="true">
+>
         <activity
             android:name=".ConfirmCardActivity"
             android:exported="false" />
