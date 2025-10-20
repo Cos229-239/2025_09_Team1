@@ -1,6 +1,7 @@
 package com.example.wildercards;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -15,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 public class ImageGenerator {
+    private static String lastGeneratedImageUrl = "";
 
     public static void generateAnimalImage(Context context,
                                            String animalName,
@@ -41,6 +43,8 @@ public class ImageGenerator {
             String url = "https://image.pollinations.ai/prompt/" + encodedPrompt +
                     "?width=512&height=512&model=flux&nologo=true&enhance=true&seed=" + seed;
 
+            lastGeneratedImageUrl = url;
+
             // Update UI
             progressBar.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
@@ -64,6 +68,7 @@ public class ImageGenerator {
                         @Override
                         public void onLoadFailed(android.graphics.drawable.Drawable errorDrawable) {
                             super.onLoadFailed(errorDrawable);
+                            Log.e("ImageGenerator", "Failed to load image from: " + url);
                             progressBar.setVisibility(View.GONE);
                             imageView.setVisibility(View.VISIBLE);
                             statusText.setText("Failed to generate. Tap to retry.");
@@ -103,4 +108,9 @@ public class ImageGenerator {
 
         return sanitized;
     }
+
+    public static String getLastGeneratedImageUrl() {
+        return lastGeneratedImageUrl;
+    }
+
 }
