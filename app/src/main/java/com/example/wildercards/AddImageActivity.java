@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -261,15 +262,12 @@ public class AddImageActivity extends BaseActivity {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
-
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-
-        return File.createTempFile(
+        File image = File.createTempFile(
                 imageFileName,
                 ".jpg",
                 storageDir
         );
-
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
