@@ -2,6 +2,7 @@ package com.example.wildercards;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -76,7 +77,7 @@ public class ConfirmImageActivity extends BaseActivity {
         }else {
             Toast.makeText(this, "No image selected", Toast.LENGTH_SHORT).show();
             Log.d("ConfirmImage", "onCreate: no image selected");
-
+        }
 
 //        String uriString = getIntent().getStringExtra("image_uri");
 //        if (uriString != null) {

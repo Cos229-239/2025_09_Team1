@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -264,7 +265,7 @@ public class AddImageActivity extends BaseActivity {
 
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
 
-        return File.createTempFile(
+        File image = File.createTempFile(
                 imageFileName,
                 ".jpg",
                 storageDir
