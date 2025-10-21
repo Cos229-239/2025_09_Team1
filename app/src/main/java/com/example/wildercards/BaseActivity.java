@@ -2,37 +2,22 @@ package com.example.wildercards;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
-
+import androidx.core.content.ContextCompat;
 import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class BaseActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
     private Dialog mLoadingDialog;
-    private FirebaseAuth mAuth;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser == null) {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
-            return;
-        }
-    }
+    private FloatingActionButton fabAdd;
 
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
@@ -42,13 +27,26 @@ public class BaseActivity extends AppCompatActivity {
         super.setContentView(fullView);
 
         bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setLabelVisibilityMode(BottomNavigationView.LABEL_VISIBILITY_UNLABELED);
+
+        // bottomNavigationView.setLabelVisibilityMode(BottomNavigationView.LABEL_VISIBILITY_SELECTED);
+
+
+
+
+        fabAdd = findViewById(R.id.nav_add);
+        if (fabAdd != null) {
+            fabAdd.setOnClickListener(v -> {
+                openActivityWithAnimation(AddImageActivity.class, 1);
+            });
+        }
 
         bottomNavigationView.setOnItemSelectedListener(item -> {
             handleMenuItem(item);
             return true;
         });
 
-       highlightCurrentMenuItem();
+        highlightCurrentMenuItem();
     }
 
     protected void showLoadingDialog() {
@@ -78,8 +76,6 @@ public class BaseActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.nav_home) {
             openActivityWithAnimation(MainActivity.class, 0);
-        } else if (id == R.id.nav_add) {
-            openActivityWithAnimation(AddImageActivity.class, 1);
         } else if (id == R.id.nav_profile) {
             openActivityWithAnimation(ProfileActivity.class, 2);
         }
@@ -140,8 +136,25 @@ public class BaseActivity extends AppCompatActivity {
             } else if (this instanceof ProfileActivity) {
                 bottomNavigationView.setSelectedItemId(R.id.nav_profile);
             } else if (this instanceof AddImageActivity) {
-                bottomNavigationView.setSelectedItemId(R.id.nav_add);
+                // Clear all bottom nav selections when on ConfirmCardActivity
+                bottomNavigationView.getMenu().setGroupCheckable(0, true, false);
+                for (int i = 0; i < bottomNavigationView.getMenu().size(); i++) {
+                    bottomNavigationView.getMenu().getItem(i).setChecked(false);
+                }
+                bottomNavigationView.getMenu().setGroupCheckable(0, true, true);
+            }
+        }
+
+        // CHANGED: Modern FAB highlight with glow effect
+        if (fabAdd != null) {
+            if (this instanceof AddImageActivity) {
+                // Active FAB - full opacity with elevation
+                fabAdd.setAlpha(1.0f);
+            } else {
+                // Inactive FAB - slightly dimmed with lower elevation
+                fabAdd.setAlpha(0.9f);
             }
         }
     }
+
 }
