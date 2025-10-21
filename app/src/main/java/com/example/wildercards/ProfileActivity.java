@@ -5,11 +5,15 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+
+
 import com.bumptech.glide.Glide;
 import com.example.wildercards.databinding.ActivityProfileBinding;
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -39,13 +43,43 @@ public class ProfileActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityProfileBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        setContentView(R.layout.activity_profile);
+        binding = ActivityProfileBinding.bind(findViewById(R.id.main));
         mAuth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
         storage = FirebaseStorage.getInstance();
+
+        setSupportActionBar(binding.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
+
         loadUserProfile();
         setupClickListeners();
+        setupAppBar();
+    }
+
+    private void setupAppBar() {
+        binding.appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            private boolean isShow = true;
+            private int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    binding.collapsingToolbar.setTitle("Profile");
+                    binding.profileImageToolbar.setVisibility(View.VISIBLE);
+                    isShow = true;
+                } else if (isShow) {
+                    binding.collapsingToolbar.setTitle(" ");
+                    binding.profileImageToolbar.setVisibility(View.INVISIBLE);
+                    isShow = false;
+                }
+            }
+        });
     }
 
     private void setupClickListeners(){
@@ -97,6 +131,7 @@ public class ProfileActivity extends BaseActivity {
                         String imageUrl = document.getString("profileImageUrl");
                         if (imageUrl != null && !imageUrl.isEmpty()) {
                             Glide.with(this).load(imageUrl).into(binding.profileImage);
+                            Glide.with(this).load(imageUrl).into(binding.profileImageToolbar);
                         }
                     } else {
                         Toast.makeText(this, "Profile not found. Please save your info.", Toast.LENGTH_LONG).show();

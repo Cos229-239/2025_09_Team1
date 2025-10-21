@@ -193,23 +193,16 @@ public class AddImageActivity extends BaseActivity {
             InputStream inputStream = getContentResolver().openInputStream(imageUri);
             selectedImageBitmap = BitmapFactory.decodeStream(inputStream);
 
-            Log.d("AddImage", "handleSelectedImage: bitmap decoded");
-
+            // Display image if you have an ImageView
             imageView.setImageBitmap(selectedImageBitmap);
 
-            // Display image if you have an ImageView
-            // imageView.setImageBitmap(selectedImageBitmap);
-
             // Optional: Save to gallery if needed
-            // saveImageToGallery(selectedImageBitmap);
+            saveImageToGallery(selectedImageBitmap);
 
             Toast.makeText(this, "Image selected successfully", Toast.LENGTH_SHORT).show();
 
-            openConfirmActivity();
             // Return the image URI or bitmap to calling activity if needed
-            // returnImageResult();
-
-            Log.d("AddImage", "handleSelectedImage: called openConfirmActivity");
+            returnImageResult();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -271,6 +264,7 @@ public class AddImageActivity extends BaseActivity {
         String imageFileName = "JPEG_" + timeStamp + "_";
 
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+
         File image = File.createTempFile(
                 imageFileName,
                 ".jpg",

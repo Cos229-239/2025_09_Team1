@@ -113,6 +113,10 @@ public class MainActivity extends BaseActivity {
         firebaseHelper.fetchAllAnimalCards(new FirebaseHelper.FetchCallback() {
             @Override
             public void onSuccess(List<AnimalCard> cards) {
+                if (isFinishing() || isDestroyed()) {
+                    Log.d(TAG, "Activity destroyed, skipping UI update");
+                    return;
+                }
                 Log.d(TAG, "Successfully loaded " + cards.size() + " cards for home");
 
                 if (cards.isEmpty()) {
@@ -131,6 +135,11 @@ public class MainActivity extends BaseActivity {
 
             @Override
             public void onFailure(String error) {
+                if (isFinishing() || isDestroyed()) {
+                    Log.d(TAG, "Activity destroyed, skipping error toast");
+                    return;
+                }
+
                 Log.e(TAG, "Failed to load home data: " + error);
                 Toast.makeText(MainActivity.this,
                         "Failed to load cards: " + error,
@@ -143,6 +152,10 @@ public class MainActivity extends BaseActivity {
      * Display the top/featured card (last saved card)
      */
     private void displayTopCard(AnimalCard card) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+
         if (card.getImageUrl() != null && !card.getImageUrl().isEmpty()) {
             // Hide placeholder text
             topCardPlaceholder.setVisibility(View.GONE);
@@ -169,6 +182,10 @@ public class MainActivity extends BaseActivity {
      * Shows up to 10 most recent cards
      */
     private void displayCollectionCards(List<AnimalCard> cards) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
+
         // Clear existing views
         collectionsContainer.removeAllViews();
 
@@ -187,6 +204,9 @@ public class MainActivity extends BaseActivity {
      * Add a single collection card to the horizontal scroll
      */
     private void addCollectionCard(AnimalCard card) {
+        if (isFinishing() || isDestroyed()) {
+            return;
+        }
         // Inflate the item layout
         View cardView = LayoutInflater.from(this)
                 .inflate(R.layout.item_home_collection_card, collectionsContainer, false);
@@ -233,7 +253,7 @@ public class MainActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         // FIX: Reload data when returning to home screen
-        loadHomeData();
+        // loadHomeData();
     }
 
     private List<TopCards> loadAnimalsFromJson() {
