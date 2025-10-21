@@ -5,4 +5,6 @@
     <color name="colorPrimary">#121714</color>
     <color name="colorSecondary">#29382E</color>
     <color name="colorAccent">#38E07A</color>
+    <color name="colorHighlight">#80FFFFFF</color>
+
 </resources>

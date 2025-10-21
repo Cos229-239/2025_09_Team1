@@ -2,6 +2,14 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.util.Properties
 import org.gradle.kotlin.dsl.annotationProcessor
+
+//plugins {
+//    alias(libs.plugins.android.application)
+//    id("com.android.application")
+//    id("org.jetbrains.kotlin.android")
+//    id("kotlin-kapt")
+//}
+
 plugins {
     id("org.jetbrains.kotlin.android")
     alias(libs.plugins.android.application)
@@ -74,8 +82,8 @@ android {
 }
 
 dependencies {
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("androidx.core:core-ktx:1.12.0")
+   // implementation("com.github.bumptech.glide:glide:4.16.0")
+   // implementation("androidx.core:core-ktx:1.12.0")
     annotationProcessor(libs.compiler)
 
     implementation(platform(libs.grpc.bom))
@@ -115,6 +123,8 @@ dependencies {
     implementation(libs.json)
     implementation(libs.credentials)
     implementation(libs.credentials.play.services.auth)
+    // implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // Testing
     testImplementation(libs.junit)

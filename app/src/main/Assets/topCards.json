@@ -1,0 +1,24 @@
+{
+  "animals": [
+    {
+      "name": "Lobster",
+      "imageResource": "lobster"
+    },
+    {
+      "name": "Kangaroo",
+      "imageResource": "kangaroo"
+    },
+    {
+      "name": "Black Panther",
+      "imageResource": "blackpanther"
+    },
+    {
+      "name": "Elephant",
+      "imageResource": "elephant"
+    },
+    {
+      "name": "Parrot",
+      "imageResource": "parrot"
+    }
+  ]
+}

@@ -37,7 +37,8 @@
             android:textSize="14sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvTitle" />
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            android:visibility="visible"/>
 
         <!-- Progress Bar -->
         <ProgressBar
@@ -49,7 +50,8 @@
             android:indeterminateTint="#00D97E"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvStatus" />
+            app:layout_constraintTop_toBottomOf="@id/tvStatus"
+            android:visibility="gone"/>
 
         <!-- Result Image Card -->
         <androidx.cardview.widget.CardView
@@ -94,16 +96,111 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/tvResultLabel"
+            <LinearLayout
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/infoLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="20dp"
-                android:text="Result"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Name -->
+                <TextView
+                    android:id="@+id/tvResultLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Animal Name"
+                    android:textStyle="bold"
+                    android:textSize="24sp"
+                    android:textColor="@android:color/white" />
+
+                <!-- Scientific Name -->
+                <TextView
+                    android:id="@+id/scientificNameTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scientific name"
+                    android:textSize="14sp"
+                    android:textColor="@android:color/darker_gray"
+                    android:layout_marginTop="2dp" />
+
+                <!-- Description -->
+                <TextView
+                    android:id="@+id/tvDescriptionLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Description goes here"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@android:color/white"
+                    android:visibility="gone"/>
+
+<!--                &lt;!&ndash; Add a gap before Habitat &ndash;&gt;-->
+<!--                <Space-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="16dp" />-->
+
+                <ImageView
+                    android:id="@+id/animalViewWiki"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:background="#2A3A3A"
+                    android:visibility="gone" />
+
+<!--                <Space-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="16dp" />-->
+
+                <!-- Habitat -->
+                <TextView
+                    android:id="@+id/habitatTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Habitat information"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@android:color/white"
+                    android:visibility="gone"/>
+
+                <!-- Add a gap before Conservation -->
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp" />
+
+                <!-- Conservation Status -->
+                <TextView
+                    android:id="@+id/conservationTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Conservation status"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"/>
+
+            </LinearLayout>
+
+
+            <!--            <TextView-->
+<!--                android:id="@+id/tvResultLabel"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:gravity="center"-->
+<!--                android:padding="20dp"-->
+<!--                android:text="Result"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:textSize="20sp"-->
+<!--                android:textStyle="bold" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/tvDescriptionLabel"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="145dp"-->
+<!--                android:gravity="center"-->
+<!--                android:padding="20dp"-->
+<!--                android:text="Description"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:textSize="20sp" />-->
 
         </androidx.cardview.widget.CardView>
 
@@ -121,10 +218,10 @@
             android:padding="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardLabel"
-            app:layout_constraintVertical_bias="0.139">
+            app:layout_constraintVertical_bias="0.192">
 
             <!-- Save to Collection -->
             <com.google.android.material.button.MaterialButton

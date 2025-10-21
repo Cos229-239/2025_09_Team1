@@ -79,7 +79,7 @@ public class BaseActivity extends AppCompatActivity {
         if (id == R.id.nav_home) {
             openActivityWithAnimation(MainActivity.class, 0);
         } else if (id == R.id.nav_add) {
-            openActivityWithAnimation(AddImageActivity.class, 1);
+            openActivityWithAnimation(ConfirmCardActivity.class, 1);
         } else if (id == R.id.nav_profile) {
             openActivityWithAnimation(ProfileActivity.class, 2);
         }
@@ -125,7 +125,7 @@ public class BaseActivity extends AppCompatActivity {
     private int getCurrentActivityPosition() {
         if (this instanceof MainActivity) {
             return 0;
-        } else if (this instanceof AddImageActivity) {
+        } else if (this instanceof ConfirmCardActivity) {
             return 1;
         } else if (this instanceof ProfileActivity) {
             return 2;
@@ -139,7 +139,7 @@ public class BaseActivity extends AppCompatActivity {
                 bottomNavigationView.setSelectedItemId(R.id.nav_home);
             } else if (this instanceof ProfileActivity) {
                 bottomNavigationView.setSelectedItemId(R.id.nav_profile);
-            } else if (this instanceof AddImageActivity) {
+            } else if (this instanceof ConfirmCardActivity) {
                 bottomNavigationView.setSelectedItemId(R.id.nav_add);
             }
         }
