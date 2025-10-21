@@ -2,8 +2,16 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.util.Properties
 import org.gradle.kotlin.dsl.annotationProcessor
+
+//plugins {
+//    alias(libs.plugins.android.application)
+//    id("com.android.application")
+//    id("org.jetbrains.kotlin.android")
+//    id("kotlin-kapt")
+//}
+
 plugins {
-    //id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.android")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
@@ -76,7 +84,7 @@ android {
 dependencies {
    // implementation("com.github.bumptech.glide:glide:4.16.0")
    // implementation("androidx.core:core-ktx:1.12.0")
-    //annotationProcessor(libs.compiler)
+    annotationProcessor(libs.compiler)
 
     implementation(platform(libs.grpc.bom))
     implementation(libs.google.cloud.vision){
