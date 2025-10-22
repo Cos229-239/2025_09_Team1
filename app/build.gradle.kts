@@ -11,7 +11,6 @@ import org.gradle.kotlin.dsl.annotationProcessor
 //}
 
 plugins {
-    id("org.jetbrains.kotlin.android")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
@@ -84,7 +83,6 @@ android {
 dependencies {
    // implementation("com.github.bumptech.glide:glide:4.16.0")
    // implementation("androidx.core:core-ktx:1.12.0")
-    annotationProcessor(libs.compiler)
 
     implementation(platform(libs.grpc.bom))
     implementation(libs.google.cloud.vision){

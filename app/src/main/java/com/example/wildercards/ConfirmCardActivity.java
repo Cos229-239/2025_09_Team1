@@ -39,8 +39,8 @@ public class ConfirmCardActivity extends BaseActivity {
     private ImageView animalImageView;
 
 
-    private String currentAnimalName = "Tiger";
-    private String currentDescription = "A beautiful red bird found in North America";
+    private String currentAnimalName ;
+    private String currentDescription;
 
     private FirebaseHelper firebaseHelper;
 
