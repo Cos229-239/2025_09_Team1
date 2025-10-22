@@ -95,7 +95,7 @@ public class MainActivity extends BaseActivity {
         // Initialize Firebase
         firebaseHelper = new FirebaseHelper();
 
-        // Load cards from Firebase
+        // Load cards from Firebase (only if user is authenticated)
         loadHomeData();
 
         // animalsContainer = findViewById(R.id.animalsContainer);
@@ -110,7 +110,15 @@ public class MainActivity extends BaseActivity {
     private void loadHomeData() {
         Log.d(TAG, "Loading home data from Firebase...");
 
-        firebaseHelper.fetchAllAnimalCards(new FirebaseHelper.FetchCallback() {
+        // Check if user is authenticated
+        if (!firebaseHelper.isUserAuthenticated()) {
+            Log.d(TAG, "User not authenticated, showing placeholder");
+            topCardPlaceholder.setVisibility(View.VISIBLE);
+            topCardPlaceholder.setText("Login to view your cards");
+            return;
+        }
+
+        firebaseHelper.fetchUserAnimalCards(new FirebaseHelper.FetchCallback() {
             @Override
             public void onSuccess(List<AnimalCard> cards) {
                 if (isFinishing() || isDestroyed()) {
@@ -141,9 +149,16 @@ public class MainActivity extends BaseActivity {
                 }
 
                 Log.e(TAG, "Failed to load home data: " + error);
-                Toast.makeText(MainActivity.this,
-                        "Failed to load cards: " + error,
-                        Toast.LENGTH_SHORT).show();
+
+                // Handle authentication error
+                if ("USER_NOT_AUTHENTICATED".equals(error)) {
+                    topCardPlaceholder.setVisibility(View.VISIBLE);
+                    topCardPlaceholder.setText("Login to view your cards");
+                } else {
+                    Toast.makeText(MainActivity.this,
+                            "Failed to load cards: " + error,
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

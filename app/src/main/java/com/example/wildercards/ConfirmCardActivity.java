@@ -2,17 +2,11 @@ package com.example.wildercards;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,8 +15,6 @@ import android.widget.Toast;
 import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
-import com.example.wildercards.ImageGenerator;
-
 
 public class ConfirmCardActivity extends BaseActivity {
     private ImageView ivResult;
@@ -32,12 +24,10 @@ public class ConfirmCardActivity extends BaseActivity {
     private TextView tvDescription;
     private Button btnSave;
 
-
     private TextView scientificNameTextView;
     private TextView habitatTextView;
     private TextView conservationTextView;
     private ImageView animalImageView;
-
 
     private String currentAnimalName = "Tiger";
     private String currentDescription = "A beautiful red bird found in North America";
@@ -49,6 +39,7 @@ public class ConfirmCardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_card);
 
+        // Initialize views
         ivResult = findViewById(R.id.ivResult);
         progressBar = findViewById(R.id.progressBar);
         tvStatus = findViewById(R.id.tvStatus);
@@ -57,11 +48,10 @@ public class ConfirmCardActivity extends BaseActivity {
         scientificNameTextView = findViewById(R.id.scientificNameTextView);
         habitatTextView = findViewById(R.id.habitatTextView);
         conservationTextView = findViewById(R.id.conservationTextView);
-
         animalImageView = findViewById(R.id.animalViewWiki);
-
         btnSave = findViewById(R.id.btn_save);
 
+        // Null checks
         if (tvAnimalName == null) Log.e(TAG, "tvAnimalName is null!");
         if (scientificNameTextView == null) Log.e(TAG, "scientificNameTextView is null!");
         if (tvDescription == null) Log.e(TAG, "tvDescription is null!");
@@ -69,50 +59,28 @@ public class ConfirmCardActivity extends BaseActivity {
         if (conservationTextView == null) Log.e(TAG, "conservationTextView is null!");
         if (animalImageView == null) Log.e(TAG, "animalImageView is null!");
 
-
-        setupRetryButton();
-
-        // Generate initial image
-
-
+        // Initialize Firebase Helper
         firebaseHelper = new FirebaseHelper();
+
+        // Check if user is authenticated when activity starts
+        checkUserAuthentication();
+
+        // Set up buttons
+        setupRetryButton();
 
         // Set animal name and description
         tvAnimalName.setText(currentAnimalName);
         tvDescription.setText(currentDescription);
 
         // Generate initial image
-        // ImageGenerator.generateAnimalImage(this, currentAnimalName, ivResult, progressBar, tvStatus);
         generateImage();
 
-        // Save button
+        // Save button - with authentication check
         btnSave.setOnClickListener(v -> {
             saveCardToFirebase();
         });
 
-
-//        new Thread(() -> {
-//            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo("Northern cardinal");
-//
-//            runOnUiThread(() -> {
-//                if (info != null) {
-//                    if (tvAnimalName != null) tvAnimalName.setText(info.getName());
-//                    if (scientificNameTextView != null) scientificNameTextView.setText(info.getScientificName());
-//                    if (tvDescription != null) tvDescription.setText(info.getDescription());
-//                    if (habitatTextView != null) habitatTextView.setText(info.getHabitat());
-//                    if (conservationTextView != null) conservationTextView.setText(info.getConservationStatus());
-//
-//                    if (animalImageView != null && info.getImageUrl() != null && !info.getImageUrl().isEmpty()) {
-//                        Glide.with(ConfirmCardActivity.this)
-//                                .load(info.getImageUrl())
-//                                .into(animalImageView);
-//                    }
-//                } else {
-//                    Toast.makeText(ConfirmCardActivity.this, "No info found!", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }).start();
-
+        // Fetch Wikipedia data in background
         new Thread(() -> {
             AnimalInfo info = WikipediaFetcher.fetchAnimalInfo("Northern cardinal");
 
@@ -122,7 +90,9 @@ public class ConfirmCardActivity extends BaseActivity {
                     if (scientificNameTextView != null) scientificNameTextView.setText(info.getScientificName());
                     if (tvDescription != null) tvDescription.setText(info.getDescription());
                     if (habitatTextView != null) habitatTextView.setText(info.getHabitat());
-                    if (conservationTextView != null && info.getConservationStatus() != null) { conservationTextView.setText("Status: " + info.getConservationStatus());}
+                    if (conservationTextView != null && info.getConservationStatus() != null) {
+                        conservationTextView.setText("Status: " + info.getConservationStatus());
+                    }
                     if (animalImageView != null && info.getImageUrl() != null && !info.getImageUrl().isEmpty()) {
                         Glide.with(ConfirmCardActivity.this)
                                 .load(info.getImageUrl())
@@ -133,17 +103,29 @@ public class ConfirmCardActivity extends BaseActivity {
                 }
             });
         }).start();
-
-        // Example
-        //String animalName = "Northern cardinal";
-//        ImageGenerator.generateAnimalImage(this, animalName, ivResult, progressBar, tvStatus);
-
     }
+
+    /**
+     * Check if user is authenticated, redirect to login if not
+     */
+    private void checkUserAuthentication() {
+        if (!firebaseHelper.isUserAuthenticated()) {
+            Log.w(TAG, "User not authenticated, but allowing them to view. Save will prompt login.");
+            // Optionally update UI to show login prompt
+            // For now, we'll just check on save
+        }
+    }
+
+    /**
+     * Generate the animal image
+     */
     private void generateImage() {
         ImageGenerator.generateAnimalImage(this, currentAnimalName, ivResult, progressBar, tvStatus);
     }
 
-    // Set up the retry button
+    /**
+     * Set up the retry button
+     */
     private void setupRetryButton() {
         Button btnTryAgain = findViewById(R.id.btn_try_again);
         btnTryAgain.setOnClickListener(new View.OnClickListener() {
@@ -165,7 +147,21 @@ public class ConfirmCardActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Save card to Firebase (user-specific)
+     */
     private void saveCardToFirebase() {
+        // First check if user is authenticated
+        if (!firebaseHelper.isUserAuthenticated()) {
+            Log.w(TAG, "User not authenticated. Redirecting to login...");
+            Toast.makeText(this, "Please login to save cards", Toast.LENGTH_LONG).show();
+
+            // Redirect to LoginActivity
+            Intent loginIntent = new Intent(ConfirmCardActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            return;
+        }
+
         // Get the image URL from ImageGenerator
         String imageUrl = ImageGenerator.getLastGeneratedImageUrl();
 
@@ -182,7 +178,7 @@ public class ConfirmCardActivity extends BaseActivity {
         String animalName = tvAnimalName.getText().toString();
         String description = tvDescription.getText().toString();
 
-        // Save to Firebase (just the URL, no image upload needed!)
+        // Save to Firebase (user-specific path)
         firebaseHelper.saveAnimalCard(
                 this,
                 animalName,
@@ -196,24 +192,29 @@ public class ConfirmCardActivity extends BaseActivity {
                     public void onSuccess(String cardId) {
                         btnSave.setEnabled(true);
                         btnSave.setText("Save Collection");
-                        Toast.makeText(ConfirmCardActivity.this, "Card saved! ✓", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ConfirmCardActivity.this, "Card saved to your collection! ✓", Toast.LENGTH_SHORT).show();
+                        Log.d(TAG, "Card saved successfully with ID: " + cardId);
                     }
 
                     @Override
                     public void onFailure(String error) {
                         btnSave.setEnabled(true);
                         btnSave.setText("Save Collection");
-                        Toast.makeText(ConfirmCardActivity.this, "Save failed: " + error, Toast.LENGTH_SHORT).show();
+
+                        // Handle authentication error specifically
+                        if ("USER_NOT_AUTHENTICATED".equals(error)) {
+                            Toast.makeText(ConfirmCardActivity.this, "Please login to save cards", Toast.LENGTH_LONG).show();
+
+                            // Redirect to login
+                            Intent loginIntent = new Intent(ConfirmCardActivity.this, LoginActivity.class);
+                            startActivity(loginIntent);
+                        } else {
+                            Toast.makeText(ConfirmCardActivity.this, "Save failed: " + error, Toast.LENGTH_SHORT).show();
+                        }
+
+                        Log.e(TAG, "Failed to save card: " + error);
                     }
-
                 }
-
-
         );
     }
-
-
-
-
-
 }

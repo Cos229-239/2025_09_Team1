@@ -2,31 +2,54 @@ package com.example.wildercards;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FirebaseHelper {
 
     private static final String TAG = "FirebaseHelper";
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth;
 
     public FirebaseHelper() {
         db = FirebaseFirestore.getInstance();
-        Log.d(TAG, "Firebase Firestore initialized");
+        mAuth = FirebaseAuth.getInstance();
+        Log.d(TAG, "Firebase Firestore and Auth initialized");
     }
 
     /**
-     * Save animal card to Firestore (saves the Pollinations.ai URL directly)
+     * Get current authenticated user ID
+     * @return userId or null if not authenticated
+     */
+    private String getCurrentUserId() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            return currentUser.getUid();
+        }
+        return null;
+    }
+
+    /**
+     * Check if user is authenticated
+     * @return true if user is logged in
+     */
+    public boolean isUserAuthenticated() {
+        return mAuth.getCurrentUser() != null;
+    }
+
+    /**
+     * Save animal card to user-specific Firestore subcollection
+     * Path: /users/{userId}/animal_cards/{cardId}
      */
     public void saveAnimalCard(Context context,
                                String animalName,
@@ -38,13 +61,23 @@ public class FirebaseHelper {
                                SaveCallback callback) {
 
         Log.d(TAG, "=== Starting to save card ===");
+
+        // Check if user is authenticated
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "User not authenticated!");
+            Toast.makeText(context, "Please login to save cards", Toast.LENGTH_SHORT).show();
+            if (callback != null) callback.onFailure("USER_NOT_AUTHENTICATED");
+            return;
+        }
+
+        Log.d(TAG, "User ID: " + userId);
         Log.d(TAG, "Animal: " + animalName);
         Log.d(TAG, "Description: " + description);
         Log.d(TAG, "Image URL: " + imageUrl);
         Log.d(TAG, "Scientific Name: " + sciName);
         Log.d(TAG, "Habitat: " + habitat);
         Log.d(TAG, "Conservation: " + conservation);
-
 
         // Validate inputs
         if (animalName == null || animalName.isEmpty()) {
@@ -68,16 +101,19 @@ public class FirebaseHelper {
         cardData.put("habitat", habitat != null ? habitat : "");
         cardData.put("conservation", conservation != null ? conservation : "");
         cardData.put("timestamp", System.currentTimeMillis());
+        cardData.put("userId", userId); // Store userId for reference
 
-        Log.d(TAG, "Saving to Firestore...");
+        Log.d(TAG, "Saving to user-specific Firestore path...");
 
-        // Save to Firestore collection "animal_cards"
-        db.collection("animal_cards")
+        // Save to user-specific subcollection: /users/{userId}/animal_cards
+        db.collection("users")
+                .document(userId)
+                .collection("animal_cards")
                 .add(cardData)
                 .addOnSuccessListener(documentReference -> {
                     String cardId = documentReference.getId();
                     Log.d(TAG, "Card saved successfully with ID: " + cardId);
-                    Toast.makeText(context, "Card saved to collection! ✓", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Card saved to your collection! ✓", Toast.LENGTH_SHORT).show();
                     if (callback != null) callback.onSuccess(cardId);
                 })
                 .addOnFailureListener(e -> {
@@ -88,22 +124,28 @@ public class FirebaseHelper {
     }
 
     /**
-     * Callback interface for save operations
+     * Fetch only the current user's animal cards
+     * Path: /users/{userId}/animal_cards
      */
-    public interface SaveCallback {
-        void onSuccess(String cardId);
-        void onFailure(String error);
-    }
+    public void fetchUserAnimalCards(FetchCallback callback) {
+        Log.d(TAG, "=== Fetching user's animal cards from Firestore ===");
 
-    public interface FetchCallback {
-        void onSuccess(List<AnimalCard> cards);
-        void onFailure(String error);
-    }
+        // Check if user is authenticated
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "User not authenticated!");
+            if (callback != null) {
+                callback.onFailure("USER_NOT_AUTHENTICATED");
+            }
+            return;
+        }
 
-    public void fetchAllAnimalCards(FetchCallback callback) {
-        Log.d(TAG, "=== Fetching all animal cards from Firestore ===");
+        Log.d(TAG, "Fetching cards for user: " + userId);
 
-        db.collection("animal_cards")
+        // Fetch from user-specific subcollection
+        db.collection("users")
+                .document(userId)
+                .collection("animal_cards")
                 .orderBy("timestamp", Query.Direction.DESCENDING) // Newest first
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -122,7 +164,7 @@ public class FirebaseHelper {
                         }
                     }
 
-                    Log.d(TAG, "Successfully fetched " + cards.size() + " cards");
+                    Log.d(TAG, "Successfully fetched " + cards.size() + " cards for user");
                     if (callback != null) {
                         callback.onSuccess(cards);
                     }
@@ -133,5 +175,21 @@ public class FirebaseHelper {
                         callback.onFailure(e.getMessage());
                     }
                 });
+    }
+
+    /**
+     * Callback interface for save operations
+     */
+    public interface SaveCallback {
+        void onSuccess(String cardId);
+        void onFailure(String error);
+    }
+
+    /**
+     * Callback interface for fetch operations
+     */
+    public interface FetchCallback {
+        void onSuccess(List<AnimalCard> cards);
+        void onFailure(String error);
     }
 }

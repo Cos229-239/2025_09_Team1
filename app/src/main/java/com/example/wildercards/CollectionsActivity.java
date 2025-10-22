@@ -1,5 +1,6 @@
 package com.example.wildercards;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +50,18 @@ public class CollectionsActivity extends BaseActivity {
         // Set up RecyclerView
         setupRecyclerView();
 
+        // Check authentication before loading cards
+        if (!firebaseHelper.isUserAuthenticated()) {
+            Log.w(TAG, "User not authenticated. Redirecting to login...");
+            Toast.makeText(this, "Please login to view your collection", Toast.LENGTH_LONG).show();
+
+            // Redirect to LoginActivity
+            Intent loginIntent = new Intent(CollectionsActivity.this, LoginActivity.class);
+            startActivity(loginIntent);
+            finish(); // Close this activity
+            return;
+        }
+
         // Load cards from Firebase
         loadCardsFromFirebase();
     }
@@ -77,16 +90,16 @@ public class CollectionsActivity extends BaseActivity {
     }
 
     /**
-     * Load all animal cards from Firebase Firestore
+     * Load user's animal cards from Firebase Firestore
      */
     private void loadCardsFromFirebase() {
-        Log.d(TAG, "Loading cards from Firebase...");
+        Log.d(TAG, "Loading user's cards from Firebase...");
 
         // Show loading indicator
         showLoading();
 
-        // Fetch cards from Firestore
-        firebaseHelper.fetchAllAnimalCards(new FirebaseHelper.FetchCallback() {
+        // Fetch user-specific cards from Firestore
+        firebaseHelper.fetchUserAnimalCards(new FirebaseHelper.FetchCallback() {
             @Override
             public void onSuccess(List<AnimalCard> cards) {
                 Log.d(TAG, "Successfully loaded " + cards.size() + " cards");
@@ -120,13 +133,25 @@ public class CollectionsActivity extends BaseActivity {
                 // Hide loading
                 hideLoading();
 
-                // Show error message
-                Toast.makeText(CollectionsActivity.this,
-                        "Failed to load cards: " + error,
-                        Toast.LENGTH_LONG).show();
+                // Handle authentication error
+                if ("USER_NOT_AUTHENTICATED".equals(error)) {
+                    Toast.makeText(CollectionsActivity.this,
+                            "Please login to view your collection",
+                            Toast.LENGTH_LONG).show();
 
-                // Show empty state
-                showEmptyState();
+                    // Redirect to login
+                    Intent loginIntent = new Intent(CollectionsActivity.this, LoginActivity.class);
+                    startActivity(loginIntent);
+                    finish();
+                } else {
+                    // Show error message
+                    Toast.makeText(CollectionsActivity.this,
+                            "Failed to load cards: " + error,
+                            Toast.LENGTH_LONG).show();
+
+                    // Show empty state
+                    showEmptyState();
+                }
             }
         });
     }
