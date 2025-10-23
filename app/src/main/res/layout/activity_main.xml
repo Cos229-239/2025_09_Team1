@@ -7,6 +7,8 @@
     android:fillViewport="true"
     android:background="@color/colorPrimary">
 
+
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -14,16 +16,151 @@
         android:padding="16dp">
 
         <!-- Header text -->
-        <TextView
-            android:id="@+id/headerText"
-            android:layout_width="wrap_content"
+<!--        <TextView-->
+<!--            android:id="@+id/headerText"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Discover Nature. Collect the Wild."-->
+<!--            android:textColor="@android:color/white"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:layout_marginBottom="16dp" />-->
+        <!-- Top Bar with Title and Coins -->
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Discover Nature. Collect the Wild."
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp">
 
+            <!-- Left side: Title -->
+            <TextView
+                android:id="@+id/tvDiscoverTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Discover the Nature"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white" />
+
+            <!-- Right side: Coins Display -->
+            <LinearLayout
+                android:id="@+id/coinsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/coins_background"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:elevation="4dp">
+
+                <!-- Coin Icon -->
+                <ImageView
+                    android:id="@+id/ivCoinIcon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_wildercoin"
+                    android:layout_marginEnd="6dp"
+                    android:contentDescription="WilderCoin" />
+
+                <!-- Coin Count -->
+                <TextView
+                    android:id="@+id/tvTotalCoins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFD700"
+                    android:minWidth="40dp"
+                    android:gravity="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Add this RIGHT AFTER your root layout opening tag -->
+<!--        <FrameLayout-->
+<!--            android:id="@+id/coinDisplayContainer"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="top|end"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:elevation="10dp">-->
+
+<!--            <LinearLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:background="#CC000000"-->
+<!--                android:paddingStart="12dp"-->
+<!--                android:paddingEnd="12dp"-->
+<!--                android:paddingTop="8dp"-->
+<!--                android:paddingBottom="8dp"-->
+<!--                android:gravity="center"-->
+<!--                android:elevation="4dp">-->
+
+<!--                <ImageView-->
+<!--                    android:id="@+id/ivCoinIcon"-->
+<!--                    android:layout_width="24dp"-->
+<!--                    android:layout_height="24dp"-->
+<!--                    android:src="@drawable/ic_wildercoin"-->
+<!--                    android:layout_marginEnd="6dp"-->
+<!--                    android:contentDescription="WilderCoin" />-->
+
+<!--                <TextView-->
+<!--                    android:id="@+id/tvTotalCoins"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:text="0"-->
+<!--                    android:textSize="16sp"-->
+<!--                    android:textStyle="bold"-->
+<!--                    android:textColor="#FFD700"-->
+<!--                    android:minWidth="40dp"-->
+<!--                    android:gravity="end" />-->
+<!--            </LinearLayout>-->
+<!--        </FrameLayout>-->
+
+<!--        &lt;!&ndash; Simple Coin Display (Top Right Corner) &ndash;&gt;-->
+<!--        <FrameLayout-->
+<!--            android:id="@+id/coinDisplaySimple"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="top|end"-->
+<!--            android:layout_margin="16dp"-->
+<!--            android:background="@drawable/coins_background"-->
+<!--            android:padding="8dp"-->
+<!--            android:elevation="6dp">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:gravity="center">-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/ivCoinIconSimple"-->
+<!--                android:layout_width="24dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:src="@drawable/ic_wildercoin"-->
+<!--                android:layout_marginEnd="4dp" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/tvTotalCoinsSimple"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="0"-->
+<!--                android:textSize="16sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textColor="#FFD700" />-->
+<!--        </LinearLayout>-->
 
         <TextView
             android:id="@+id/topCardText"
@@ -52,7 +189,6 @@
                 android:scaleType="centerCrop"
                 android:contentDescription="Top card image" />
 
-            <!-- FIX: Placeholder text (will be hidden when image loads) -->
             <TextView
                 android:id="@+id/topCardPlaceholder"
                 android:layout_width="wrap_content"
