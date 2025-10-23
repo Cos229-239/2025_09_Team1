@@ -85,6 +85,15 @@ public class AddImageActivity extends BaseActivity {
         setupClickListeners();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Clear the image view when the user returns to this activity
+        if (imageView != null) {
+            imageView.setImageBitmap(null);
+        }
+    }
+
     // request camera and storage permission
     private void initViews() {
         btnUpload = findViewById(R.id.btnUpload);
@@ -287,6 +296,7 @@ public class AddImageActivity extends BaseActivity {
 
         builder.setPositiveButton("Save", (dialog, which) -> {
             saveImageToGallery(bitmap);
+            returnImageResult();
         });
 
         builder.setNegativeButton("Retake", (dialog, which) -> {
@@ -415,12 +425,13 @@ public class AddImageActivity extends BaseActivity {
 
         if (selectedImageUri != null) {
             confirmIntent.putExtra("image_uri", selectedImageUri.toString());
+        } else if (currentPhotoUri != null) {
+            confirmIntent.putExtra("image_uri", currentPhotoUri.toString());
+        } else {
+            Toast.makeText(this, "No image to confirm", Toast.LENGTH_SHORT).show();
+            return;
         }
-
-        if (currentPhotoPath != null) {
-            confirmIntent.putExtra("image_path", currentPhotoPath);
-        }
-
+        
         startActivity(confirmIntent);
     }
 

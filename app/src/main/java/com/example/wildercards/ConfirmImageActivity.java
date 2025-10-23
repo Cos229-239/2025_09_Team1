@@ -20,6 +20,8 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,6 +41,12 @@ public class ConfirmImageActivity extends AppCompatActivity {
 
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private final OkHttpClient client = new OkHttpClient();
+
+    // A list of generic terms to ignore for a more specific identification
+    private final List<String> genericTerms = Arrays.asList(
+            "animal", "rodent", "mammal", "bird", "fish", "insect", "reptile", "amphibian",
+            "mouse", "rat", "fauna", "chordate", "wildlife", "vertebrate", "invertebrate"
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,10 +75,8 @@ public class ConfirmImageActivity extends AppCompatActivity {
                 btnConfirm.setEnabled(false);
                 Toast.makeText(ConfirmImageActivity.this, getString(R.string.identifying), Toast.LENGTH_SHORT).show();
 
-                // Run image processing and network call on a background thread to prevent ANR
                 new Thread(() -> {
                     try {
-                        // This is a slow operation and must be off the main thread
                         identityImage(imageUri);
                     } catch (IOException e) {
                         Log.e(TAG, "Error processing image before network call", e);
@@ -89,7 +95,6 @@ public class ConfirmImageActivity extends AppCompatActivity {
     }
 
     private void identityImage(Uri imageUri) throws IOException {
-        // Part 1: Image processing (runs on the background thread from onClick)
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream);
@@ -125,8 +130,6 @@ public class ConfirmImageActivity extends AppCompatActivity {
 
         } catch (JSONException e) {
             Log.e(TAG, "Error creating JSON request", e);
-            // Since we are on a background thread, we can't show a toast directly
-            // We can re-enable the button and the user can try again
             runOnUiThread(() -> btnConfirm.setEnabled(true));
             return;
         }
@@ -137,11 +140,9 @@ public class ConfirmImageActivity extends AppCompatActivity {
                 .post(requestBody)
                 .build();
 
-        // Part 2: Network Call (OkHttp's enqueue handles its own background threading)
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(@NonNull Call call, @NonNull IOException e) {
-                // Log the full exception to get more details on the network failure
                 Log.e(TAG, "Google Vision API call failed", e);
                 runOnUiThread(() -> {
                     Toast.makeText(ConfirmImageActivity.this, getString(R.string.api_call_failed), Toast.LENGTH_LONG).show();
@@ -151,7 +152,7 @@ public class ConfirmImageActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
-                final String responseData = response.body().string(); // Read body once
+                final String responseData = response.body().string();
 
                 if (!response.isSuccessful()) {
                     Log.e(TAG, "Unexpected code " + response + " Body: " + responseData);
@@ -161,33 +162,30 @@ public class ConfirmImageActivity extends AppCompatActivity {
                     });
                     return;
                 }
-                
+
                 Log.d(TAG, "Response: " + responseData);
 
                 try {
                     JSONObject jsonObject = new JSONObject(responseData);
                     JSONArray responsesArray = jsonObject.getJSONArray("responses");
+                    String description = null;
 
                     if (responsesArray.length() > 0) {
                         JSONObject firstResponse = responsesArray.getJSONObject(0);
-                        if (firstResponse.has("labelAnnotations")) {
-                            JSONArray labelAnnotations = firstResponse.getJSONArray("labelAnnotations");
-                            if (labelAnnotations.length() > 0) {
-                                JSONObject topResult = labelAnnotations.getJSONObject(0);
-                                String description = topResult.getString("description");
+                        description = findSpecificDescription(firstResponse);
+                    }
 
-                                Log.d(TAG, "Top Label: " + description);
-
-                                runOnUiThread(() -> {
-                                    Toast.makeText(ConfirmImageActivity.this, getString(R.string.identified, description), Toast.LENGTH_LONG).show();
-                                    Intent intent = new Intent(ConfirmImageActivity.this, ConfirmCardActivity.class);
-                                    intent.putExtra("animal_name", description);
-                                    startActivity(intent);
-                                    finish(); // Finish this activity
-                                });
-                                return; 
-                            }
-                        }
+                    if (description != null) {
+                        final String finalDescription = description;
+                        final String capitalizedDescription = finalDescription.substring(0, 1).toUpperCase() + finalDescription.substring(1);
+                        runOnUiThread(() -> {
+                            Toast.makeText(ConfirmImageActivity.this, getString(R.string.identified, capitalizedDescription), Toast.LENGTH_LONG).show();
+                            Intent intent = new Intent(ConfirmImageActivity.this, ConfirmCardActivity.class);
+                            intent.putExtra("animal_name", capitalizedDescription);
+                            startActivity(intent);
+                            finish();
+                        });
+                        return;
                     }
 
                     Log.d(TAG, "No suitable annotations found in the response.");
@@ -205,5 +203,68 @@ public class ConfirmImageActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private String findSpecificDescription(JSONObject response) throws JSONException {
+        // 1. Prioritize web entities
+        if (response.has("webDetection")) {
+            JSONObject webDetection = response.getJSONObject("webDetection");
+            if (webDetection.has("webEntities")) {
+                JSONArray webEntities = webDetection.getJSONArray("webEntities");
+                for (int i = 0; i < webEntities.length(); i++) {
+                    JSONObject entity = webEntities.getJSONObject(i);
+                    if (entity.has("description")) {
+                        String desc = entity.getString("description");
+                        if (!genericTerms.contains(desc.toLowerCase())) {
+                            Log.d(TAG, "Found specific Web Entity: " + desc);
+                            return desc;
+                        }
+                    }
+                }
+            }
+
+            // 2. Fallback to best guess labels
+            if (webDetection.has("bestGuessLabels")) {
+                JSONArray bestGuessLabels = webDetection.getJSONArray("bestGuessLabels");
+                for (int i = 0; i < bestGuessLabels.length(); i++) {
+                    JSONObject label = bestGuessLabels.getJSONObject(i);
+                    if (label.has("label")) {
+                        String lbl = label.getString("label");
+                        if (!genericTerms.contains(lbl.toLowerCase())) {
+                            Log.d(TAG, "Found specific Best Guess Label: " + lbl);
+                            return lbl;
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Fallback to label annotations
+        if (response.has("labelAnnotations")) {
+            JSONArray labelAnnotations = response.getJSONArray("labelAnnotations");
+            for (int i = 0; i < labelAnnotations.length(); i++) {
+                JSONObject label = labelAnnotations.getJSONObject(i);
+                if (label.has("description")) {
+                    String desc = label.getString("description");
+                    if (!genericTerms.contains(desc.toLowerCase())) {
+                        Log.d(TAG, "Found specific Label Annotation: " + desc);
+                        return desc;
+                    }
+                }
+            }
+        }
+
+        // 4. If nothing specific, take the first web entity as a last resort
+        if (response.has("webDetection")) {
+            JSONObject webDetection = response.getJSONObject("webDetection");
+            if (webDetection.has("webEntities")) {
+                JSONArray webEntities = webDetection.getJSONArray("webEntities");
+                if (webEntities.length() > 0) {
+                    return webEntities.getJSONObject(0).optString("description", null);
+                }
+            }
+        }
+
+        return null; // No description found
     }
 }

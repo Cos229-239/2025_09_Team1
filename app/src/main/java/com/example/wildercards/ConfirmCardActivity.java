@@ -40,7 +40,6 @@ public class ConfirmCardActivity extends BaseActivity {
 
 
     private String currentAnimalName ;
-    private String currentDescription;
 
     private FirebaseHelper firebaseHelper;
 
@@ -69,6 +68,12 @@ public class ConfirmCardActivity extends BaseActivity {
         if (conservationTextView == null) Log.e(TAG, "conservationTextView is null!");
         if (animalImageView == null) Log.e(TAG, "animalImageView is null!");
 
+        currentAnimalName = getIntent().getStringExtra("animal_name");
+        if (currentAnimalName == null || currentAnimalName.isEmpty()) {
+            Toast.makeText(this, "Animal name not provided.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         setupRetryButton();
 
@@ -79,7 +84,6 @@ public class ConfirmCardActivity extends BaseActivity {
 
         // Set animal name and description
         tvAnimalName.setText(currentAnimalName);
-        tvDescription.setText(currentDescription);
 
         // Generate initial image
         // ImageGenerator.generateAnimalImage(this, currentAnimalName, ivResult, progressBar, tvStatus);
@@ -114,7 +118,7 @@ public class ConfirmCardActivity extends BaseActivity {
 //        }).start();
 
         new Thread(() -> {
-            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo("Northern cardinal");
+            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo(currentAnimalName);
 
             runOnUiThread(() -> {
                 if (info != null) {
@@ -149,7 +153,7 @@ public class ConfirmCardActivity extends BaseActivity {
         btnTryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!currentAnimalName.isEmpty()) {
+                if (currentAnimalName != null && !currentAnimalName.isEmpty()) {
                     // Regenerate the image with the same animal name
                     ImageGenerator.generateAnimalImage(
                             ConfirmCardActivity.this,
@@ -211,9 +215,4 @@ public class ConfirmCardActivity extends BaseActivity {
 
         );
     }
-
-
-
-
-
 }
