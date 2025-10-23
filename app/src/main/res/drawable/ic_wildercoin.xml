@@ -1,0 +1,64 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="100dp"
+    android:height="100dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Outer circle (gold rim) -->
+    <path
+        android:fillColor="#FFD700"
+        android:strokeColor="#DAA520"
+        android:strokeWidth="2"
+        android:pathData="M50,2 A48,48 0 1,1 49.999,2"/>
+
+    <!-- Inner circle (darker gold) -->
+    <path
+        android:fillColor="#FFA500"
+        android:strokeColor="#FF8C00"
+        android:strokeWidth="1.5"
+        android:pathData="M50,8 A42,42 0 1,1 49.999,8"/>
+
+    <!-- Center circle (lighter gold) -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M50,15 A35,35 0 1,1 49.999,15"/>
+
+    <!-- Shine effect (top left) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.4"
+        android:pathData="M20,30
+                          Q35,20 50,30
+                          T70,30
+                          Q55,40 40,30
+                          Z"/>
+
+    <!-- Edge details (coin ridges) -->
+    <!-- Note: dash array not supported well in VectorDrawable; approximated by many short segments or omitted for simplicity -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#B8860B"
+        android:strokeWidth="0.5"
+        android:pathData="M50,4 A46,46 0 1,1 49.999,4"/>
+
+    <!-- Inner glow -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFEC8B"
+        android:strokeWidth="1"
+        android:strokeAlpha="0.6"
+        android:pathData="M50,12 A38,38 0 1,1 49.999,12"/>
+
+    <!-- Shadow (bottom right) -->
+    <path
+        android:fillColor="#000000"
+        android:fillAlpha="0.15"
+        android:pathData="M50,65
+                          Q60,73 70,65
+                          T80,65
+                          Q70,75 60,65
+                          Z"/>
+
+    <!-- TODO: Add “W” as a path. Convert your letter W to path data and insert here. -->
+
+</vector>
