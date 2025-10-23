@@ -43,6 +43,10 @@ public class MainActivity extends BaseActivity {
 
     private LinearLayout animalsContainer;
 
+    // Coin display components
+    private ImageView ivCoinIcon;
+    private TextView tvTotalCoins;
+
     // Firebase Helper
     private FirebaseHelper firebaseHelper;
 
@@ -53,6 +57,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "========== MainActivity onCreate() ==========");
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -62,6 +67,7 @@ public class MainActivity extends BaseActivity {
         });
 
         recyclerView = findViewById(R.id.animalsRecyclerView);
+        Log.d(TAG, "RecyclerView initialized");
 
         // Set horizontal layout manager
         LinearLayoutManager layoutManager = new LinearLayoutManager(
@@ -92,8 +98,25 @@ public class MainActivity extends BaseActivity {
         collectionsContainer = findViewById(R.id.collectionsContainer);
         collectionsTitle = findViewById(R.id.collections);
 
+        // Initialize coin display views
+        ivCoinIcon = findViewById(R.id.ivCoinIcon);
+        tvTotalCoins = findViewById(R.id.tvTotalCoins);
+
+        // Check if coin views exist
+        if (ivCoinIcon == null) {
+            Log.e(TAG, "ERROR: ivCoinIcon is NULL! Did you add coin layout to activity_main.xml?");
+        }
+        if (tvTotalCoins == null) {
+            Log.e(TAG, "ERROR: tvTotalCoins is NULL! Did you add coin layout to activity_main.xml?");
+        } else {
+            Log.d(TAG, "Coin views initialized successfully");
+        }
+
         // Initialize Firebase
         firebaseHelper = new FirebaseHelper();
+
+        // Load user's coins
+        loadUserCoins();
 
         // Load cards from Firebase (only if user is authenticated)
         loadHomeData();
@@ -102,6 +125,129 @@ public class MainActivity extends BaseActivity {
 
 
 
+    }
+
+    /**
+     * Load user's WilderCoins and display in UI
+     */
+    private void loadUserCoins() {
+        Log.d(TAG, "=== loadUserCoins() called ===");
+
+        // Check if TextView exists
+        if (tvTotalCoins == null) {
+            Log.e(TAG, "ERROR: tvTotalCoins is NULL! Cannot display coins.");
+            Log.e(TAG, "Make sure you added the coin layout to activity_main.xml");
+            return;
+        }
+
+        // Check if user is authenticated
+        if (!firebaseHelper.isUserAuthenticated()) {
+            Log.d(TAG, "User not authenticated, showing 0 coins");
+            tvTotalCoins.setText("0");
+            return;
+        }
+
+        Log.d(TAG, "User authenticated, fetching coins from Firebase...");
+
+        // Fetch user's coins from Firebase
+        firebaseHelper.getUserCoins(new FirebaseHelper.CoinsCallback() {
+            @Override
+            public void onSuccess(int totalCoins) {
+                if (isFinishing() || isDestroyed()) {
+                    Log.w(TAG, "Activity finishing, skipping coin update");
+                    return;
+                }
+
+                Log.d(TAG, "✅ SUCCESS: User has " + totalCoins + " WilderCoins");
+
+                if (tvTotalCoins != null) {
+                    // Get current displayed value
+                    String currentText = tvTotalCoins.getText().toString();
+                    int currentCoins = 0;
+                    try {
+                        currentCoins = Integer.parseInt(currentText);
+                    } catch (NumberFormatException e) {
+                        currentCoins = 0;
+                    }
+
+                    Log.d(TAG, "Animating coins from " + currentCoins + " to " + totalCoins);
+                    // Animate the coin count
+                    animateCoinCount(currentCoins, totalCoins);
+                } else {
+                    Log.e(TAG, "ERROR: tvTotalCoins became null during callback!");
+                }
+            }
+
+            @Override
+            public void onFailure(String error) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+
+                Log.e(TAG, "❌ FAILED to load coins: " + error);
+
+                if (tvTotalCoins != null) {
+                    tvTotalCoins.setText("0");
+                } else {
+                    Log.e(TAG, "ERROR: tvTotalCoins is null, cannot show error state");
+                }
+            }
+        });
+    }
+
+    /**
+     * Animate coin count from old value to new value
+     */
+    private void animateCoinCount(int from, int to) {
+        if (tvTotalCoins == null) return;
+
+        // Animate the coin icon bounce
+        if (ivCoinIcon != null && from != to) {
+            animateCoinIconBounce();
+        }
+
+        // Simple animation: count up from old to new
+        android.animation.ValueAnimator animator = android.animation.ValueAnimator.ofInt(from, to);
+        animator.setDuration(800); // 800ms animation
+        animator.addUpdateListener(new android.animation.ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(android.animation.ValueAnimator animation) {
+                if (tvTotalCoins != null) {
+                    tvTotalCoins.setText(String.valueOf(animation.getAnimatedValue()));
+                }
+            }
+        });
+        animator.start();
+    }
+
+    /**
+     * Bounce animation for coin icon
+     */
+    private void animateCoinIconBounce() {
+        if (ivCoinIcon == null) return;
+
+        // Scale up
+        android.animation.ObjectAnimator scaleUpX = android.animation.ObjectAnimator.ofFloat(ivCoinIcon, "scaleX", 1f, 1.3f);
+        android.animation.ObjectAnimator scaleUpY = android.animation.ObjectAnimator.ofFloat(ivCoinIcon, "scaleY", 1f, 1.3f);
+
+        scaleUpX.setDuration(200);
+        scaleUpY.setDuration(200);
+
+        scaleUpX.setRepeatCount(1);
+        scaleUpY.setRepeatCount(1);
+
+        scaleUpX.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+        scaleUpY.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+
+        scaleUpX.start();
+        scaleUpY.start();
+
+        // Rotate animation
+        android.animation.ObjectAnimator rotate = android.animation.ObjectAnimator.ofFloat(ivCoinIcon, "rotation", 0f, 360f);
+        rotate.setDuration(400);
+        rotate.start();
+
+        Log.d(TAG, "Coin icon bounce animation started");
     }
 
     /**
@@ -267,8 +413,19 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG, "onResume() called - refreshing coins");
+        // Reload coins when returning to home screen (in case new card was saved)
+        loadUserCoins();
         // FIX: Reload data when returning to home screen
         // loadHomeData();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart() called - refreshing coins");
+        // Also refresh on start
+        loadUserCoins();
     }
 
     private List<TopCards> loadAnimalsFromJson() {

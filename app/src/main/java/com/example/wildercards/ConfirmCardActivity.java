@@ -2,10 +2,17 @@ package com.example.wildercards;
 
 import static android.content.ContentValues.TAG;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -148,7 +155,7 @@ public class ConfirmCardActivity extends BaseActivity {
     }
 
     /**
-     * Save card to Firebase (user-specific)
+     * Save card to Firebase (user-specific) with WilderCoins reward
      */
     private void saveCardToFirebase() {
         // First check if user is authenticated
@@ -177,8 +184,16 @@ public class ConfirmCardActivity extends BaseActivity {
         // Get current values
         String animalName = tvAnimalName.getText().toString();
         String description = tvDescription.getText().toString();
+        String conservationStatus = conservationTextView.getText().toString();
 
-        // Save to Firebase (user-specific path)
+        // Clean conservation status (remove "Status: " prefix if present)
+        if (conservationStatus.startsWith("Status: ")) {
+            conservationStatus = conservationStatus.substring(8).trim();
+        }
+
+        Log.d(TAG, "Saving card with conservation status: " + conservationStatus);
+
+        // Save to Firebase (user-specific path with coins)
         firebaseHelper.saveAnimalCard(
                 this,
                 animalName,
@@ -186,18 +201,23 @@ public class ConfirmCardActivity extends BaseActivity {
                 imageUrl,
                 scientificNameTextView.getText().toString(),
                 habitatTextView.getText().toString(),
-                conservationTextView.getText().toString(),
+                conservationStatus,
                 new FirebaseHelper.SaveCallback() {
                     @Override
-                    public void onSuccess(String cardId) {
+                    public void onSuccess(String cardId, int coinsEarned) {
                         btnSave.setEnabled(true);
                         btnSave.setText("Save Collection");
-                        Toast.makeText(ConfirmCardActivity.this, "Card saved to your collection! ✓", Toast.LENGTH_SHORT).show();
+
+                        // The toast with coins is already shown by FirebaseHelper
                         Log.d(TAG, "Card saved successfully with ID: " + cardId);
+                        Log.d(TAG, "WilderCoins earned: " + coinsEarned);
+
+                        // Optional: Add coin animation here in future
+                        // showCoinAnimation(coinsEarned);
                     }
 
                     @Override
-                    public void onFailure(String error) {
+                    public void onFailure(String error, int coinsEarned) {
                         btnSave.setEnabled(true);
                         btnSave.setText("Save Collection");
 
