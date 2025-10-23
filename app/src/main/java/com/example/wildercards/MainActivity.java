@@ -112,8 +112,18 @@ public class MainActivity extends BaseActivity {
             Log.d(TAG, "Coin views initialized successfully");
         }
 
+        // Start subtle pulse animation on coin icon
+        if (ivCoinIcon != null) {
+            startCoinPulseAnimation();
+        }
+
         // Initialize Firebase
         firebaseHelper = new FirebaseHelper();
+
+        // Start subtle pulse animation on coin icon
+        if (ivCoinIcon != null) {
+            startCoinPulseAnimation();
+        }
 
         // Load user's coins
         loadUserCoins();
@@ -251,8 +261,29 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
-     * Load card data from Firebase for home screen
+     * Start subtle pulse animation on coin icon (continuous)
      */
+    private void startCoinPulseAnimation() {
+        if (ivCoinIcon == null) return;
+
+        // Subtle scale pulse
+        android.animation.ObjectAnimator scaleX = android.animation.ObjectAnimator.ofFloat(ivCoinIcon, "scaleX", 1f, 1.1f);
+        android.animation.ObjectAnimator scaleY = android.animation.ObjectAnimator.ofFloat(ivCoinIcon, "scaleY", 1f, 1.1f);
+
+        scaleX.setDuration(1500);
+        scaleY.setDuration(1500);
+
+        scaleX.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+        scaleY.setRepeatCount(android.animation.ValueAnimator.INFINITE);
+
+        scaleX.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+        scaleY.setRepeatMode(android.animation.ValueAnimator.REVERSE);
+
+        scaleX.start();
+        scaleY.start();
+
+        Log.d(TAG, "Coin pulse animation started");
+    }
     private void loadHomeData() {
         Log.d(TAG, "Loading home data from Firebase...");
 
@@ -376,6 +407,7 @@ public class MainActivity extends BaseActivity {
         ImageView cardImage = cardView.findViewById(R.id.collectionCardImage);
         TextView cardBrand = cardView.findViewById(R.id.collectionCardBrand);
         TextView cardName = cardView.findViewById(R.id.collectionCardName);
+        TextView rarityBadge = cardView.findViewById(R.id.rarityBadge); // Add this to your layout
 
         // Set data
         cardName.setText(card.getAnimalName());
@@ -386,6 +418,11 @@ public class MainActivity extends BaseActivity {
             cardBrand.setText(sciName);
         } else {
             cardBrand.setText("Wildlife");
+        }
+
+        // Apply rarity badge if TextView exists
+        if (rarityBadge != null && card.getConservation() != null) {
+            RarityBadgeHelper.applyRarityBadge(rarityBadge, card.getConservation());
         }
 
         // Load image

@@ -1,56 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp">
+    android:layout_width="150dp"
+    android:layout_height="200dp"
+    android:layout_marginEnd="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
-    <!-- Card Image -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="120dp"
-        android:layout_height="160dp"
-        android:layout_marginEnd="8dp"
-        app:cardCornerRadius="12dp"
-        app:cardBackgroundColor="@color/colorSecondary"
-        app:cardElevation="2dp"
-        app:strokeWidth="0dp">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-        <!-- FIX: Add ImageView inside the card -->
+        <!-- Card Image -->
         <ImageView
             android:id="@+id/collectionCardImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:contentDescription="Collection card image" />
+            android:contentDescription="Animal card" />
 
-    </com.google.android.material.card.MaterialCardView>
+        <!-- Gradient overlay for text readability -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="@drawable/gradient_overlay" />
 
-    <!-- Brand/Scientific Name -->
-    <TextView
-        android:id="@+id/collectionCardBrand"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:text="Brand"
-        android:textColor="@android:color/white"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="2dp"
-        android:textSize="10sp"
-        android:maxLines="1"
-        android:ellipsize="end" />
+        <!-- Card Info -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:orientation="vertical"
+            android:padding="8dp">
 
-    <!-- Card Name -->
-    <TextView
-        android:id="@+id/collectionCardName"
-        android:layout_width="120dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Card name"
-        android:textColor="@android:color/white"
-        android:textSize="12sp"
-        android:textStyle="bold"
-        android:layout_marginLeft="2dp"
-        android:maxLines="2"
-        android:ellipsize="end" />
+            <TextView
+                android:id="@+id/collectionCardBrand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wildlife"
+                android:textSize="10sp"
+                android:textColor="@android:color/white"
+                android:alpha="0.8" />
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/collectionCardName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Animal Name"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:maxLines="1"
+                android:ellipsize="end" />
+        </LinearLayout>
+
+        <!-- RARITY BADGE (ADD THIS) -->
+        <TextView
+            android:id="@+id/rarityBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|end"
+            android:layout_margin="8dp"
+            android:text="🟢 Common"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="#4CAF50"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:elevation="4dp"
+            android:visibility="gone" />
+    </FrameLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -36,8 +36,9 @@ public class ConfirmCardActivity extends BaseActivity {
     private TextView conservationTextView;
     private ImageView animalImageView;
 
-    private String currentAnimalName = "Tiger";
-    private String currentDescription = "A beautiful red bird found in North America";
+    private String currentAnimalName = "Radiated Tortoise";
+    private String currentDescription = "";
+
 
     private FirebaseHelper firebaseHelper;
 
@@ -75,9 +76,6 @@ public class ConfirmCardActivity extends BaseActivity {
         // Set up buttons
         setupRetryButton();
 
-        // Set animal name and description
-        tvAnimalName.setText(currentAnimalName);
-        tvDescription.setText(currentDescription);
 
         // Generate initial image
         generateImage();
@@ -89,7 +87,7 @@ public class ConfirmCardActivity extends BaseActivity {
 
         // Fetch Wikipedia data in background
         new Thread(() -> {
-            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo("Northern cardinal");
+            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo(currentAnimalName);
 
             runOnUiThread(() -> {
                 if (info != null) {
@@ -105,6 +103,11 @@ public class ConfirmCardActivity extends BaseActivity {
                                 .load(info.getImageUrl())
                                 .into(animalImageView);
                     }
+
+                    currentAnimalName = info.getName();
+                    currentDescription = info.getDescription();
+
+
                 } else {
                     Toast.makeText(ConfirmCardActivity.this, "Failed to fetch animal info", Toast.LENGTH_SHORT).show();
                 }
