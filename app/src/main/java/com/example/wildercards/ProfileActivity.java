@@ -56,30 +56,6 @@ public class ProfileActivity extends BaseActivity {
 
         loadUserProfile();
         setupClickListeners();
-        setupAppBar();
-    }
-
-    private void setupAppBar() {
-        binding.appBar.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            private boolean isShow = true;
-            private int scrollRange = -1;
-
-            @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    binding.collapsingToolbar.setTitle("Profile");
-                    binding.profileImageToolbar.setVisibility(View.VISIBLE);
-                    isShow = true;
-                } else if (isShow) {
-                    binding.collapsingToolbar.setTitle(" ");
-                    binding.profileImageToolbar.setVisibility(View.INVISIBLE);
-                    isShow = false;
-                }
-            }
-        });
     }
 
     private void setupClickListeners(){
