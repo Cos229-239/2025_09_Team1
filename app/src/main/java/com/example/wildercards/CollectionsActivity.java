@@ -81,8 +81,8 @@ public class CollectionsActivity extends BaseActivity {
 
         // Optional: Set click listener for cards
         adapter.setOnCardClickListener(card -> {
-            // FIX: Handle card click - show details, etc.
-            Toast.makeText(this, "Clicked: " + card.getAnimalName(), Toast.LENGTH_SHORT).show();
+            // Open detail activity
+            openAnimalDetailActivity(card);
             Log.d(TAG, "Card clicked: " + card.getAnimalName());
         });
 
@@ -202,4 +202,16 @@ public class CollectionsActivity extends BaseActivity {
         // Optionally reload cards when returning to this activity
         // loadCardsFromFirebase();
     }
+
+    /**
+     * Open the detail screen for the selected animal card
+     */
+    private void openAnimalDetailActivity(AnimalCard card) {
+        Intent intent = new Intent(this, AnimalDetailActivity.class);
+        intent.putExtra("animal_id", card.getCardId()); // or use your correct field
+        intent.putExtra("animal_name", card.getAnimalName());
+        intent.putExtra("animal_image", card.getImageUrl()); // optional if you have one
+        startActivity(intent);
+    }
+
 }

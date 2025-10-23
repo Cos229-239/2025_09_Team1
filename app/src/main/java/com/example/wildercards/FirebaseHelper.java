@@ -392,6 +392,65 @@ public class FirebaseHelper {
     }
 
     /**
+     * Delete animal card from user's collection
+     * Path: /users/{userId}/animal_cards/{cardId}
+     */
+    public void deleteAnimalCard(String cardId, DeleteCallback callback) {
+        Log.d(TAG, "=== Deleting animal card ===");
+
+        // Check if user is authenticated
+        String userId = getCurrentUserId();
+        if (userId == null) {
+            Log.e(TAG, "User not authenticated!");
+            if (callback != null) callback.onFailure("USER_NOT_AUTHENTICATED");
+            return;
+        }
+
+        if (cardId == null || cardId.isEmpty()) {
+            Log.e(TAG, "Card ID is null or empty!");
+            if (callback != null) callback.onFailure("Invalid card ID");
+            return;
+        }
+
+        Log.d(TAG, "Deleting card ID: " + cardId + " for user: " + userId);
+
+        // Delete from user-specific subcollection
+        db.collection("users")
+                .document(userId)
+                .collection("animal_cards")
+                .document(cardId)
+                .delete()
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "Card deleted successfully from Firestore");
+
+                    // Decrement user's card count and coins
+                    // Note: We don't subtract coins, just decrement card count
+                    DocumentReference userRef = db.collection("users").document(userId);
+                    userRef.update("cardsCollected", FieldValue.increment(-1))
+                            .addOnSuccessListener(aVoid2 -> {
+                                Log.d(TAG, "Card count decremented");
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.w(TAG, "Failed to decrement card count: " + e.getMessage());
+                            });
+
+                    if (callback != null) callback.onSuccess();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to delete card from Firestore", e);
+                    if (callback != null) callback.onFailure(e.getMessage());
+                });
+    }
+
+    /**
+     * Callback interface for delete operations
+     */
+    public interface DeleteCallback {
+        void onSuccess();
+        void onFailure(String error);
+    }
+
+    /**
      * Callback interface for initialization operations
      */
     public interface InitCallback {

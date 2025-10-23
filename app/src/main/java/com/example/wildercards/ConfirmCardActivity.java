@@ -1,3 +1,5 @@
+
+
 package com.example.wildercards;
 
 import static android.content.ContentValues.TAG;
@@ -24,6 +26,7 @@ import androidx.cardview.widget.CardView;
 import com.bumptech.glide.Glide;
 
 public class ConfirmCardActivity extends BaseActivity {
+
     private ImageView ivResult;
     private ProgressBar progressBar;
     private TextView tvStatus;
@@ -36,9 +39,11 @@ public class ConfirmCardActivity extends BaseActivity {
     private TextView conservationTextView;
     private ImageView animalImageView;
 
-    private String currentAnimalName = "Radiated Tortoise";
-    private String currentDescription = "";
+    // Floating coin animation view
+    private TextView tvFloatingCoins;
 
+    private String currentAnimalName = "Tiger";
+    private String currentDescription = "A beautiful red bird found in North America";
 
     private FirebaseHelper firebaseHelper;
 
@@ -76,6 +81,9 @@ public class ConfirmCardActivity extends BaseActivity {
         // Set up buttons
         setupRetryButton();
 
+        // Set animal name and description
+        tvAnimalName.setText(currentAnimalName);
+        tvDescription.setText(currentDescription);
 
         // Generate initial image
         generateImage();
@@ -87,12 +95,13 @@ public class ConfirmCardActivity extends BaseActivity {
 
         // Fetch Wikipedia data in background
         new Thread(() -> {
-            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo(currentAnimalName);
+            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo("Northern cardinal");
 
             runOnUiThread(() -> {
                 if (info != null) {
                     if (tvAnimalName != null) tvAnimalName.setText(info.getName());
-                    if (scientificNameTextView != null) scientificNameTextView.setText(info.getScientificName());
+                    if (scientificNameTextView != null)
+                        scientificNameTextView.setText(info.getScientificName());
                     if (tvDescription != null) tvDescription.setText(info.getDescription());
                     if (habitatTextView != null) habitatTextView.setText(info.getHabitat());
                     if (conservationTextView != null && info.getConservationStatus() != null) {
@@ -103,11 +112,6 @@ public class ConfirmCardActivity extends BaseActivity {
                                 .load(info.getImageUrl())
                                 .into(animalImageView);
                     }
-
-                    currentAnimalName = info.getName();
-                    currentDescription = info.getDescription();
-
-
                 } else {
                     Toast.makeText(ConfirmCardActivity.this, "Failed to fetch animal info", Toast.LENGTH_SHORT).show();
                 }
@@ -211,12 +215,15 @@ public class ConfirmCardActivity extends BaseActivity {
                         btnSave.setEnabled(true);
                         btnSave.setText("Save Collection");
 
+                        // Show floating coin animation
+                        showFloatingCoinAnimation(coinsEarned);
+
+                        // Haptic feedback (vibration)
+                        triggerHapticFeedback();
+
                         // The toast with coins is already shown by FirebaseHelper
                         Log.d(TAG, "Card saved successfully with ID: " + cardId);
                         Log.d(TAG, "WilderCoins earned: " + coinsEarned);
-
-                        // Optional: Add coin animation here in future
-                        // showCoinAnimation(coinsEarned);
                     }
 
                     @Override
@@ -239,5 +246,77 @@ public class ConfirmCardActivity extends BaseActivity {
                     }
                 }
         );
+    }
+
+    /**
+     * Show floating coin animation when card is saved
+     * Displays "+X 🪙" that floats up and fades out
+     */
+    private void showFloatingCoinAnimation(int coinsEarned) {
+        if (tvFloatingCoins == null) {
+            Log.w(TAG, "tvFloatingCoins is null, cannot show animation");
+            return;
+        }
+
+        // Get conservation status for rarity emoji
+        String conservationStatus = conservationTextView.getText().toString();
+        if (conservationStatus.startsWith("Status: ")) {
+            conservationStatus = conservationStatus.substring(8).trim();
+        }
+        String rarityEmoji = ConservationStatusMapper.getRarityEmoji(
+                ConservationStatusMapper.mapFullTextToAbbreviation(conservationStatus)
+        );
+
+        // Set text with emoji
+        tvFloatingCoins.setText("+" + coinsEarned + " 🪙 " + rarityEmoji);
+        tvFloatingCoins.setVisibility(View.VISIBLE);
+        tvFloatingCoins.setAlpha(1f);
+
+        // Reset position
+        tvFloatingCoins.setTranslationY(0);
+
+        // Create floating animation (move up and fade out)
+        ObjectAnimator moveUp = ObjectAnimator.ofFloat(tvFloatingCoins, "translationY", 0f, -300f);
+        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(tvFloatingCoins, "alpha", 1f, 0f);
+
+        moveUp.setDuration(2000); // 2 seconds
+        fadeOut.setDuration(2000);
+        fadeOut.setStartDelay(500); // Start fading after 0.5s
+
+        moveUp.setInterpolator(new AccelerateDecelerateInterpolator());
+        fadeOut.setInterpolator(new AccelerateDecelerateInterpolator());
+
+        moveUp.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                tvFloatingCoins.setVisibility(View.GONE);
+            }
+        });
+
+        moveUp.start();
+        fadeOut.start();
+
+        Log.d(TAG, "Floating coin animation started: +" + coinsEarned + " coins");
+    }
+
+    /**
+     * Trigger haptic feedback (vibration) when earning coins
+     */
+    private void triggerHapticFeedback() {
+        try {
+            Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if (vibrator != null && vibrator.hasVibrator()) {
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    // For Android 8.0 and above
+                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE));
+                } else {
+                    // For older versions
+                    vibrator.vibrate(100);
+                }
+                Log.d(TAG, "Haptic feedback triggered");
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to trigger haptic feedback", e);
+        }
     }
 }
