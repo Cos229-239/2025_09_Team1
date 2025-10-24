@@ -101,7 +101,8 @@ public class ConfirmCardActivity extends BaseActivity {
             runOnUiThread(() -> {
                 if (info != null) {
                     if (tvAnimalName != null) tvAnimalName.setText(info.getName());
-                    if (scientificNameTextView != null) scientificNameTextView.setText(info.getScientificName());
+                    if (scientificNameTextView != null)
+                        scientificNameTextView.setText(info.getScientificName());
                     if (tvDescription != null) tvDescription.setText(info.getDescription());
                     if (habitatTextView != null) habitatTextView.setText(info.getHabitat());
                     if (conservationTextView != null && info.getConservationStatus() != null) {
@@ -123,6 +124,7 @@ public class ConfirmCardActivity extends BaseActivity {
             });
         }).start();
     }
+
     /**
      * Check if user is authenticated, redirect to login if not
      */
@@ -212,7 +214,6 @@ public class ConfirmCardActivity extends BaseActivity {
 
                         // The toast with coins is already shown by FirebaseHelper
                         Log.d(TAG, "Card saved successfully with ID: " + cardId);
-                        Log.d(TAG, "WilderCoins earned: " + coinsEarned);
 
                         // Optional: Add coin animation here in future
                         // showCoinAnimation(coinsEarned);

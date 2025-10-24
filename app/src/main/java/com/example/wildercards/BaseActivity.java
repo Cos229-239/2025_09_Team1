@@ -55,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
         fabAdd = findViewById(R.id.nav_add);
         if (fabAdd != null) {
             fabAdd.setOnClickListener(v -> {
-                openActivityWithAnimation(ConfirmCardActivity.class, 1);
+                openActivityWithAnimation(ConfirmImageActivity.class, 1);
             });
         }
 
