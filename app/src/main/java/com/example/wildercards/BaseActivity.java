@@ -55,7 +55,7 @@ public class BaseActivity extends AppCompatActivity {
         fabAdd = findViewById(R.id.nav_add);
         if (fabAdd != null) {
             fabAdd.setOnClickListener(v -> {
-                openActivityWithAnimation(AddImageActivity.class, 1);
+                openActivityWithAnimation(ConfirmCardActivity.class, 1);
             });
         }
 
@@ -139,7 +139,7 @@ public class BaseActivity extends AppCompatActivity {
     private int getCurrentActivityPosition() {
         if (this instanceof MainActivity) {
             return 0;
-        } else if (this instanceof AddImageActivity) {
+        } else if (this instanceof ConfirmCardActivity) {
             return 1;
         } else if (this instanceof ProfileActivity) {
             return 2;
@@ -165,7 +165,7 @@ public class BaseActivity extends AppCompatActivity {
 
         // CHANGED: Modern FAB highlight with glow effect
         if (fabAdd != null) {
-            if (this instanceof AddImageActivity) {
+            if (this instanceof ConfirmCardActivity) {
                 // Active FAB - full opacity with elevation
                 fabAdd.setAlpha(1.0f);
             } else {

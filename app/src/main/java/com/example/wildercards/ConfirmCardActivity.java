@@ -42,7 +42,7 @@ public class ConfirmCardActivity extends BaseActivity {
     // Floating coin animation view
     private TextView tvFloatingCoins;
 
-    private String currentAnimalName = "Tiger";
+    private String currentAnimalName = "Lemur Leaf Frog";
     private String currentDescription = "A beautiful red bird found in North America";
 
     private FirebaseHelper firebaseHelper;
@@ -95,7 +95,7 @@ public class ConfirmCardActivity extends BaseActivity {
 
         // Fetch Wikipedia data in background
         new Thread(() -> {
-            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo("Northern cardinal");
+            AnimalInfo info = WikipediaFetcher.fetchAnimalInfo(currentAnimalName);
 
             runOnUiThread(() -> {
                 if (info != null) {
