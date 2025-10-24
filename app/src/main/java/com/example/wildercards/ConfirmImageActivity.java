@@ -1,5 +1,6 @@
 package com.example.wildercards;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -39,6 +42,8 @@ public class ConfirmImageActivity extends AppCompatActivity {
     private Button btnConfirm;
     private Uri imageUri;
 
+    private ActivityResultLauncher<Intent> imagePickerLauncher;
+
     public static final MediaType JSON = MediaType.get("application/json; charset=utf-8");
     private final OkHttpClient client = new OkHttpClient();
 
@@ -51,6 +56,24 @@ public class ConfirmImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        imagePickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null && result.getData().getData() != null) {
+                        imageUri = result.getData().getData();
+                        if (ivSelectedImage != null) {
+                            ivSelectedImage.setImageURI(imageUri);
+                        }
+                    } else {
+                        // If user cancels image selection, and there was no initial image, finish.
+                        if (imageUri == null) {
+                            Toast.makeText(this, "No image selected.", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                });
+
         setContentView(R.layout.activity_confirm_image);
 
         ivSelectedImage = findViewById(R.id.ivSelectedImage);
@@ -65,9 +88,8 @@ public class ConfirmImageActivity extends AppCompatActivity {
                 Log.e(TAG, "ImageView is null. Cannot display image.");
             }
         } else {
-            Log.e(TAG, "Image URI was null. Cannot display image.");
-            Toast.makeText(this, getString(R.string.no_image_selected), Toast.LENGTH_SHORT).show();
-            finish();
+            // No image URI passed, launch the image chooser.
+            openImageChooser();
         }
 
         btnConfirm.setOnClickListener(v -> {
@@ -92,6 +114,12 @@ public class ConfirmImageActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void openImageChooser() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        imagePickerLauncher.launch(intent);
     }
 
     private void identityImage(Uri imageUri) throws IOException {

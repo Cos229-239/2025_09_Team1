@@ -153,7 +153,7 @@ public class BaseActivity extends AppCompatActivity {
                 bottomNavigationView.setSelectedItemId(R.id.nav_home);
             } else if (this instanceof ProfileActivity) {
                 bottomNavigationView.setSelectedItemId(R.id.nav_profile);
-            } else if (this instanceof AddImageActivity) {
+            } else if (this instanceof ConfirmCardActivity) {
                 // Clear all bottom nav selections when on ConfirmCardActivity
                 bottomNavigationView.getMenu().setGroupCheckable(0, true, false);
                 for (int i = 0; i < bottomNavigationView.getMenu().size(); i++) {
