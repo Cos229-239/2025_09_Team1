@@ -3,13 +3,6 @@ import java.io.FileInputStream
 import java.util.Properties
 import org.gradle.kotlin.dsl.annotationProcessor
 
-//plugins {
-//    alias(libs.plugins.android.application)
-//    id("com.android.application")
-//    id("org.jetbrains.kotlin.android")
-//    id("kotlin-kapt")
-//}
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -138,5 +131,9 @@ dependencies {
     //
     //    // implementation("com.squareup.okhttp3:okhttp:4.12.0")
     //    implementation("com.google.code.gson:gson:2.10.1")
+
+    // exit interface dependency
+    implementation("androidx.exifinterface:exifinterface:1.3.6")
+
 }
 
