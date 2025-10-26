@@ -363,20 +363,30 @@ public class AnimalDetailActivity extends BaseActivity {
                     .start();
         }
     }
+    //onbackpressed
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        finish();
+//        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+//        //finish();
+//
+//
+//    }
 
-    @Override
-    public void onBackPressed() {
-        // Smooth exit animation
-        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(scrollView, "alpha", 1f, 0f);
-        fadeOut.setDuration(200);
-        fadeOut.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                AnimalDetailActivity.super.onBackPressed();
-            }
-        });
-        fadeOut.start();
-    }
+//    @Override
+//    public void onBackPressed() {
+//        // Smooth exit animation
+//        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(scrollView, "alpha", 1f, 0f);
+//        fadeOut.setDuration(200);
+//        fadeOut.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                AnimalDetailActivity.super.onBackPressed();
+//            }
+//        });
+//        fadeOut.start();
+//    }
 
     public String getFormattedCollectionDate() {
 //        Date date = new Date(timestamp);
