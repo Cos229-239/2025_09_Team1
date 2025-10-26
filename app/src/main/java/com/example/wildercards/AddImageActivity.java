@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,15 +19,12 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.google.android.material.button.MaterialButton;
-// Import your BaseActivity - adjust the package name as needed
-// import com.yourpackage.BaseActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,23 +38,25 @@ import java.util.List;
 import java.util.Locale;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.button.MaterialButton;
-
+/**
+ * Activity for adding images either by selecting from gallery or capturing with camera.
+ * Handles permission requests and image orientation correction using EXIF data.
+ */
 public class AddImageActivity extends BaseActivity {
 
+    // UI Components
     private MaterialButton btnUpload, btnTakePhoto;
-    private ImageView imageView; // Add an ImageView to your layout to display the selected/captured image
+    private ImageView imageView;
 
+    // Image data holders
     private Uri currentPhotoUri;
     private String currentPhotoPath;
-
-    // Permission request codes
-    private static final int PERMISSION_REQUEST_CODE = 100;
+    private Uri selectedImageUri;
+    private Bitmap selectedImageBitmap;
 
     // Activity Result Launchers for modern API
     private ActivityResultLauncher<Intent> galleryLauncher;
@@ -64,21 +64,18 @@ public class AddImageActivity extends BaseActivity {
     private ActivityResultLauncher<String> galleryPermissionLauncher;
     private ActivityResultLauncher<String[]> multiplePermissionLauncher;
 
-    // To store and return the selected/captured image
-    private Uri selectedImageUri;
-    private Bitmap selectedImageBitmap;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_add_image);
+
+        // Apply system window insets for edge-to-edge display
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
 
         initViews();
         initActivityLaunchers();
@@ -88,22 +85,26 @@ public class AddImageActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Clear the image view when the user returns to this activity
+        // Clear the image view when returning to this activity
         if (imageView != null) {
             imageView.setImageBitmap(null);
         }
     }
 
-    // request camera and storage permission
+    /**
+     * Initialize UI components
+     */
     private void initViews() {
         btnUpload = findViewById(R.id.btnUpload);
         btnTakePhoto = findViewById(R.id.btnTakePhoto);
-        // Initialize ImageView if you have one in your layout
         imageView = findViewById(R.id.imageView);
     }
 
+    /**
+     * Initialize activity result launchers for gallery, camera, and permissions
+     */
     private void initActivityLaunchers() {
-        // Gallery launcher
+        // Gallery selection launcher
         galleryLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -116,18 +117,17 @@ public class AddImageActivity extends BaseActivity {
                 }
         );
 
-        // Camera launcher
+        // Camera capture launcher
         cameraLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
                     if (result.getResultCode() == RESULT_OK) {
-                        // Show preview and ask for confirmation
                         showImagePreviewDialog();
                     }
                 }
         );
 
-        // Permission launchers
+        // Single permission launcher for gallery access
         galleryPermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestPermission(),
                 isGranted -> {
@@ -139,6 +139,7 @@ public class AddImageActivity extends BaseActivity {
                 }
         );
 
+        // Multiple permissions launcher for camera access
         multiplePermissionLauncher = registerForActivityResult(
                 new ActivityResultContracts.RequestMultiplePermissions(),
                 permissions -> {
@@ -159,16 +160,22 @@ public class AddImageActivity extends BaseActivity {
         );
     }
 
+    /**
+     * Setup click listeners for buttons
+     */
     private void setupClickListeners() {
         btnUpload.setOnClickListener(v -> checkGalleryPermissionAndOpen());
         btnTakePhoto.setOnClickListener(v -> checkCameraPermissionAndOpen());
     }
 
-    // ========== UPLOAD IMAGE FUNCTIONALITY ==========
+    // ========== GALLERY IMAGE SELECTION ==========
 
+    /**
+     * Check for appropriate storage permission based on Android version and open gallery
+     */
     private void checkGalleryPermissionAndOpen() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            // Android 13+
+            // Android 13+ requires READ_MEDIA_IMAGES
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_MEDIA_IMAGES)
                     == PackageManager.PERMISSION_GRANTED) {
                 openGallery();
@@ -176,7 +183,7 @@ public class AddImageActivity extends BaseActivity {
                 galleryPermissionLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES);
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            // Android 6-12
+            // Android 6-12 requires READ_EXTERNAL_STORAGE
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
                     == PackageManager.PERMISSION_GRANTED) {
                 openGallery();
@@ -184,33 +191,40 @@ public class AddImageActivity extends BaseActivity {
                 galleryPermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
             }
         } else {
-            // Android 5 and below
+            // Android 5 and below - no runtime permissions needed
             openGallery();
         }
     }
 
+    /**
+     * Open gallery to select an image
+     */
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         galleryLauncher.launch(intent);
     }
 
+    /**
+     * Handle the selected image from gallery
+     * Applies EXIF orientation correction before displaying and saving
+     */
     private void handleSelectedImage(Uri imageUri) {
         selectedImageUri = imageUri;
 
         try {
-            InputStream inputStream = getContentResolver().openInputStream(imageUri);
-            selectedImageBitmap = BitmapFactory.decodeStream(inputStream);
+            // Load image with correct orientation from EXIF data
+            selectedImageBitmap = getCorrectlyOrientedBitmap(imageUri);
 
-            // Display image if you have an ImageView
+            // Display the corrected image
             imageView.setImageBitmap(selectedImageBitmap);
 
-            // Optional: Save to gallery if needed
+            // Save to gallery
             saveImageToGallery(selectedImageBitmap);
 
             Toast.makeText(this, "Image selected successfully", Toast.LENGTH_SHORT).show();
 
-            // Return the image URI or bitmap to calling activity if needed
+            // Navigate to confirmation screen
             returnImageResult();
 
         } catch (Exception e) {
@@ -219,8 +233,11 @@ public class AddImageActivity extends BaseActivity {
         }
     }
 
-    // ========== CAMERA FUNCTIONALITY ==========
+    // ========== CAMERA IMAGE CAPTURE ==========
 
+    /**
+     * Check for camera and storage permissions before opening camera
+     */
     private void checkCameraPermissionAndOpen() {
         List<String> permissionsNeeded = new ArrayList<>();
 
@@ -230,7 +247,7 @@ public class AddImageActivity extends BaseActivity {
             permissionsNeeded.add(Manifest.permission.CAMERA);
         }
 
-        // Check storage permission for saving photos
+        // Check storage permission for Android 9 and below
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -245,10 +262,13 @@ public class AddImageActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Open camera to capture a photo
+     */
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        // Create a file to save the photo
+        // Create a file to save the full-resolution photo
         File photoFile = null;
         try {
             photoFile = createImageFile();
@@ -258,6 +278,7 @@ public class AddImageActivity extends BaseActivity {
         }
 
         if (photoFile != null) {
+            // Get content URI using FileProvider for security
             currentPhotoUri = FileProvider.getUriForFile(this,
                     getPackageName() + ".fileprovider",
                     photoFile);
@@ -267,8 +288,11 @@ public class AddImageActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Create a temporary image file to store the captured photo
+     * @return File object for the new image
+     */
     private File createImageFile() throws IOException {
-        // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
@@ -281,17 +305,15 @@ public class AddImageActivity extends BaseActivity {
         return image;
     }
 
+    /**
+     * Show dialog to confirm saving the captured photo or retaking it
+     */
     private void showImagePreviewDialog() {
-        // Load the captured image
-        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath);
+        // Load the captured image with correct orientation from EXIF data
+        Bitmap bitmap = getCorrectlyOrientedBitmap(currentPhotoPath);
 
-        // Create a dialog with ImageView to show preview
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Save this photo?");
-
-        // You can add a custom view with ImageView here to show preview
-        // For simplicity, we'll just show text options
-
         builder.setMessage("Do you want to save this photo to gallery?");
 
         builder.setPositiveButton("Save", (dialog, which) -> {
@@ -300,7 +322,7 @@ public class AddImageActivity extends BaseActivity {
         });
 
         builder.setNegativeButton("Retake", (dialog, which) -> {
-            // Delete the temporary file and retake
+            // Delete the temporary file and open camera again
             File file = new File(currentPhotoPath);
             if (file.exists()) {
                 file.delete();
@@ -319,8 +341,100 @@ public class AddImageActivity extends BaseActivity {
         builder.show();
     }
 
-    // ========== SAVE TO GALLERY ==========
+    // ========== IMAGE ORIENTATION CORRECTION ==========
 
+    /**
+     * Load bitmap from file path with correct orientation using EXIF data
+     * Camera photos often have rotation metadata that needs to be applied
+     * @param imagePath File path to the image
+     * @return Correctly oriented bitmap
+     */
+    private Bitmap getCorrectlyOrientedBitmap(String imagePath) {
+        try {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            ExifInterface exif = new ExifInterface(imagePath);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+
+            return rotateBitmap(bitmap, orientation);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return BitmapFactory.decodeFile(imagePath);
+        }
+    }
+
+    /**
+     * Load bitmap from URI with correct orientation using EXIF data
+     * @param uri Content URI of the image
+     * @return Correctly oriented bitmap
+     */
+    private Bitmap getCorrectlyOrientedBitmap(Uri uri) {
+        try {
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            inputStream.close();
+
+            inputStream = getContentResolver().openInputStream(uri);
+            ExifInterface exif = new ExifInterface(inputStream);
+            int orientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,
+                    ExifInterface.ORIENTATION_NORMAL);
+            inputStream.close();
+
+            return rotateBitmap(bitmap, orientation);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * Rotate or flip bitmap based on EXIF orientation value
+     * @param bitmap Original bitmap
+     * @param orientation EXIF orientation value
+     * @return Rotated/flipped bitmap
+     */
+    private Bitmap rotateBitmap(Bitmap bitmap, int orientation) {
+        Matrix matrix = new Matrix();
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                matrix.postRotate(90);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                matrix.postRotate(180);
+                break;
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                matrix.postRotate(270);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL:
+                matrix.setScale(-1, 1);
+                break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL:
+                matrix.setScale(1, -1);
+                break;
+            default:
+                return bitmap;
+        }
+
+        try {
+            Bitmap rotated = Bitmap.createBitmap(bitmap, 0, 0,
+                    bitmap.getWidth(), bitmap.getHeight(),
+                    matrix, true);
+            bitmap.recycle();
+            return rotated;
+        } catch (OutOfMemoryError e) {
+            e.printStackTrace();
+            return bitmap;
+        }
+    }
+
+    // ========== SAVE IMAGE TO GALLERY ==========
+
+    /**
+     * Save bitmap to device gallery
+     * Uses MediaStore API for Android 10+ and legacy file system for older versions
+     * @param bitmap Bitmap to save
+     */
     private void saveImageToGallery(Bitmap bitmap) {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String fileName = "IMG_" + timeStamp + ".jpg";
@@ -328,27 +442,27 @@ public class AddImageActivity extends BaseActivity {
         boolean saved = false;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Android 10+ (Use MediaStore)
+            // Android 10+ uses MediaStore API
             saved = saveImageToGalleryQ(bitmap, fileName);
         } else {
-            // Android 9 and below
+            // Android 9 and below use legacy file system
             saved = saveImageToGalleryLegacy(bitmap, fileName);
         }
 
         if (saved) {
             Toast.makeText(this, "Image saved to gallery", Toast.LENGTH_SHORT).show();
             selectedImageBitmap = bitmap;
-            // openConfirmActivity();
-            // Display image if you have an ImageView
-            // imageView.setImageBitmap(bitmap);
-
-            // Return the result
-            // returnImageResult();
         } else {
             Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
         }
     }
 
+    /**
+     * Save image using MediaStore API (Android 10+)
+     * @param bitmap Bitmap to save
+     * @param fileName Desired file name
+     * @return true if saved successfully
+     */
     private boolean saveImageToGalleryQ(Bitmap bitmap, String fileName) {
         ContentValues values = new ContentValues();
         values.put(MediaStore.Images.Media.DISPLAY_NAME, fileName);
@@ -369,6 +483,12 @@ public class AddImageActivity extends BaseActivity {
         return false;
     }
 
+    /**
+     * Save image using legacy file system (Android 9 and below)
+     * @param bitmap Bitmap to save
+     * @param fileName Desired file name
+     * @return true if saved successfully
+     */
     private boolean saveImageToGalleryLegacy(Bitmap bitmap, String fileName) {
         File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
 
@@ -394,32 +514,9 @@ public class AddImageActivity extends BaseActivity {
         return false;
     }
 
-    // ========== RETURN RESULT ==========
-
-//    private void returnImageResult() {
-//        // If this activity was started for result, return the image
-//        Intent resultIntent = new Intent();
-//
-//        if (selectedImageUri != null) {
-//            resultIntent.putExtra("image_uri", selectedImageUri.toString());
-//        }
-//
-//        if (currentPhotoPath != null) {
-//            resultIntent.putExtra("image_path", currentPhotoPath);
-//        }
-//
-//        // You can also pass the bitmap as byte array (be careful with size)
-//        // ByteArrayOutputStream stream = new ByteArrayOutputStream();
-//        // selectedImageBitmap.compress(Bitmap.CompressFormat.JPEG, 50, stream);
-//        // byte[] byteArray = stream.toByteArray();
-//        // resultIntent.putExtra("image_bitmap", byteArray);
-//
-//        setResult(RESULT_OK, resultIntent);
-//
-//        // Don't finish the activity automatically unless you want to
-//        // finish();
-//    }
-
+    /**
+     * Navigate to ConfirmImageActivity with the selected/captured image URI
+     */
     private void returnImageResult() {
         Intent confirmIntent = new Intent(this, ConfirmImageActivity.class);
 
@@ -431,13 +528,16 @@ public class AddImageActivity extends BaseActivity {
             Toast.makeText(this, "No image to confirm", Toast.LENGTH_SHORT).show();
             return;
         }
-        
+
         startActivity(confirmIntent);
     }
 
-
     // ========== PERMISSION HANDLING ==========
 
+    /**
+     * Show dialog when permission is denied, with option to open app settings
+     * @param permissionType Type of permission that was denied
+     */
     private void showPermissionDeniedDialog(String permissionType) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Permission Required");
@@ -454,39 +554,29 @@ public class AddImageActivity extends BaseActivity {
         builder.show();
     }
 
-    private void openConfirmActivity() {
-        Log.d("AddImage", "openConfirmActivity: selectedImageUri = " + selectedImageUri
-                + ", currentPhotoPath = " + currentPhotoPath);
+    // ========== PUBLIC GETTERS ==========
 
-        Intent confirmIntent = new Intent(this, ConfirmImageActivity.class);
-
-        if (selectedImageUri != null) {
-            confirmIntent.putExtra("image_uri", selectedImageUri.toString());
-            Log.d("AddImage", "openConfirmActivity: put image_uri extra");
-        }
-
-        if (currentPhotoPath != null) {
-            confirmIntent.putExtra("image_path", currentPhotoPath);
-            Log.d("AddImage", "openConfirmActivity: put image_path extra");
-        }
-
-        startActivity(confirmIntent);
-        Log.d("AddImage", "openConfirmActivity: startActivity called");
-    }
-
-
-    // ========== PUBLIC METHODS TO GET IMAGE ==========
-
+    /**
+     * Get the URI of the selected/captured image
+     * @return Image URI
+     */
     public Uri getSelectedImageUri() {
         return selectedImageUri;
     }
 
+    /**
+     * Get the bitmap of the selected/captured image
+     * @return Image bitmap
+     */
     public Bitmap getSelectedImageBitmap() {
         return selectedImageBitmap;
     }
 
+    /**
+     * Get the file path of the captured image
+     * @return Image file path
+     */
     public String getImagePath() {
         return currentPhotoPath;
     }
-
 }

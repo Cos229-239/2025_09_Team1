@@ -47,10 +47,6 @@ public class BaseActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setLabelVisibilityMode(BottomNavigationView.LABEL_VISIBILITY_UNLABELED);
 
-        // bottomNavigationView.setLabelVisibilityMode(BottomNavigationView.LABEL_VISIBILITY_SELECTED);
-
-
-
 
         fabAdd = findViewById(R.id.nav_add);
         if (fabAdd != null) {
