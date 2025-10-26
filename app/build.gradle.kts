@@ -3,15 +3,7 @@ import java.io.FileInputStream
 import java.util.Properties
 import org.gradle.kotlin.dsl.annotationProcessor
 
-//plugins {
-//    alias(libs.plugins.android.application)
-//    id("com.android.application")
-//    id("org.jetbrains.kotlin.android")
-//    id("kotlin-kapt")
-//
-
 plugins {
-    // id("org.jetbrains.kotlin.android")
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
@@ -84,8 +76,6 @@ android {
 dependencies {
    // implementation("com.github.bumptech.glide:glide:4.16.0")
    // implementation("androidx.core:core-ktx:1.12.0")
-    // annotationProcessor(libs.compiler)
-    annotationProcessor(libs.glide.compiler)
 
     implementation(platform(libs.grpc.bom))
     implementation(libs.google.cloud.vision){
@@ -112,6 +102,7 @@ dependencies {
 
     // Glide for Image Loading
     implementation(libs.glide)
+    annotationProcessor(libs.glide.compiler)
 
     // Networking
     implementation(libs.retrofit)
@@ -140,5 +131,9 @@ dependencies {
     //
     //    // implementation("com.squareup.okhttp3:okhttp:4.12.0")
     //    implementation("com.google.code.gson:gson:2.10.1")
+
+    // exit interface dependency
+    implementation("androidx.exifinterface:exifinterface:1.3.6")
+
 }
 

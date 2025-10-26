@@ -1,14 +1,5 @@
 package com.example.wildercards;
 
-//public class TopCards {
-//    private String name;
-//    private String imageUrl;
-//
-//    public String getName() { return name; }
-//    public String getImageUrl() { return imageUrl; }
-//}
-
-
 public class TopCards {
     private String name;
     private String imageResource;

@@ -22,6 +22,8 @@ import android.widget.Toast;
 import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
+import com.example.wildercards.ImageGenerator;
+
 
 public class ConfirmCardActivity extends BaseActivity {
     private ImageView ivResult;
@@ -31,14 +33,15 @@ public class ConfirmCardActivity extends BaseActivity {
     private TextView tvDescription;
     private Button btnSave;
 
+
     private TextView scientificNameTextView;
     private TextView habitatTextView;
     private TextView conservationTextView;
     private ImageView animalImageView;
 
-    private String currentAnimalName = "Radiated Tortoise";
-    private String currentDescription = "";
+    private String currentDescription;
 
+    private String currentAnimalName;
 
     private FirebaseHelper firebaseHelper;
 
@@ -47,7 +50,6 @@ public class ConfirmCardActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirm_card);
 
-        // Initialize views
         ivResult = findViewById(R.id.ivResult);
         progressBar = findViewById(R.id.progressBar);
         tvStatus = findViewById(R.id.tvStatus);
@@ -59,7 +61,6 @@ public class ConfirmCardActivity extends BaseActivity {
         animalImageView = findViewById(R.id.animalViewWiki);
         btnSave = findViewById(R.id.btn_save);
 
-        // Null checks
         if (tvAnimalName == null) Log.e(TAG, "tvAnimalName is null!");
         if (scientificNameTextView == null) Log.e(TAG, "scientificNameTextView is null!");
         if (tvDescription == null) Log.e(TAG, "tvDescription is null!");
@@ -67,6 +68,12 @@ public class ConfirmCardActivity extends BaseActivity {
         if (conservationTextView == null) Log.e(TAG, "conservationTextView is null!");
         if (animalImageView == null) Log.e(TAG, "animalImageView is null!");
 
+        currentAnimalName = getIntent().getStringExtra("animal_name");
+        if (currentAnimalName == null || currentAnimalName.isEmpty()) {
+            Toast.makeText(this, "Animal name not provided.", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         // Initialize Firebase Helper
         firebaseHelper = new FirebaseHelper();
 
@@ -76,6 +83,8 @@ public class ConfirmCardActivity extends BaseActivity {
         // Set up buttons
         setupRetryButton();
 
+        tvAnimalName.setText(currentAnimalName);
+        tvDescription.setText(currentDescription);
 
         // Generate initial image
         generateImage();
@@ -92,7 +101,8 @@ public class ConfirmCardActivity extends BaseActivity {
             runOnUiThread(() -> {
                 if (info != null) {
                     if (tvAnimalName != null) tvAnimalName.setText(info.getName());
-                    if (scientificNameTextView != null) scientificNameTextView.setText(info.getScientificName());
+                    if (scientificNameTextView != null)
+                        scientificNameTextView.setText(info.getScientificName());
                     if (tvDescription != null) tvDescription.setText(info.getDescription());
                     if (habitatTextView != null) habitatTextView.setText(info.getHabitat());
                     if (conservationTextView != null && info.getConservationStatus() != null) {
@@ -125,17 +135,11 @@ public class ConfirmCardActivity extends BaseActivity {
             // For now, we'll just check on save
         }
     }
-
-    /**
-     * Generate the animal image
-     */
     private void generateImage() {
         ImageGenerator.generateAnimalImage(this, currentAnimalName, ivResult, progressBar, tvStatus);
     }
 
-    /**
-     * Set up the retry button
-     */
+    // Set up the retry button
     private void setupRetryButton() {
         Button btnTryAgain = findViewById(R.id.btn_try_again);
         btnTryAgain.setOnClickListener(new View.OnClickListener() {
@@ -157,9 +161,6 @@ public class ConfirmCardActivity extends BaseActivity {
         });
     }
 
-    /**
-     * Save card to Firebase (user-specific) with WilderCoins reward
-     */
     private void saveCardToFirebase() {
         // First check if user is authenticated
         if (!firebaseHelper.isUserAuthenticated()) {
@@ -207,13 +208,12 @@ public class ConfirmCardActivity extends BaseActivity {
                 conservationStatus,
                 new FirebaseHelper.SaveCallback() {
                     @Override
-                    public void onSuccess(String cardId, int coinsEarned) {
+                    public void onSuccess(String cardId, int coinsEarnd) {
                         btnSave.setEnabled(true);
                         btnSave.setText("Save Collection");
 
                         // The toast with coins is already shown by FirebaseHelper
                         Log.d(TAG, "Card saved successfully with ID: " + cardId);
-                        Log.d(TAG, "WilderCoins earned: " + coinsEarned);
 
                         // Optional: Add coin animation here in future
                         // showCoinAnimation(coinsEarned);
@@ -238,6 +238,13 @@ public class ConfirmCardActivity extends BaseActivity {
                         Log.e(TAG, "Failed to save card: " + error);
                     }
                 }
+
+
         );
     }
+
+
+
+
+
 }

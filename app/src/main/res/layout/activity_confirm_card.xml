@@ -179,34 +179,7 @@
                     android:textColor="@android:color/white"/>
 
             </LinearLayout>
-
-
-            <!--            <TextView-->
-<!--                android:id="@+id/tvResultLabel"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:gravity="center"-->
-<!--                android:padding="20dp"-->
-<!--                android:text="Result"-->
-<!--                android:textColor="@android:color/white"-->
-<!--                android:textSize="20sp"-->
-<!--                android:textStyle="bold" />-->
-
-<!--            <TextView-->
-<!--                android:id="@+id/tvDescriptionLabel"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="145dp"-->
-<!--                android:gravity="center"-->
-<!--                android:padding="20dp"-->
-<!--                android:text="Description"-->
-<!--                android:textColor="@android:color/white"-->
-<!--                android:textSize="20sp" />-->
-
         </androidx.cardview.widget.CardView>
-
-
-
-        <!-- Your other views go here -->
 
         <!-- Container for buttons -->
         <LinearLayout

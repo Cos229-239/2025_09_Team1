@@ -26,15 +26,17 @@
         android:layout_height="0dp"
         android:layout_above="@+id/btnConfirm"
         android:layout_below="@id/pageTitle"
-        android:layout_marginBottom="20dp"
-        android:scaleType="fitCenter"
-        android:contentDescription="@string/selected_image_description"/>
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="33dp"
+        android:contentDescription="@string/selected_image_description"
+        android:scaleType="fitCenter" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="100dp"
         android:text="@string/confirm_and_identify_button"
         android:textAllCaps="false"
         android:textColor="@android:color/black"
