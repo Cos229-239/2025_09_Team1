@@ -2,6 +2,7 @@ package com.example.wildercards;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -435,11 +436,12 @@ public class MainActivity extends BaseActivity {
                     .into(cardImage);
         }
 
-        // FIX: Add click listener
+        // Add click listener
         cardView.setOnClickListener(v -> {
-            Toast.makeText(this, card.getAnimalName(), Toast.LENGTH_SHORT).show();
-            // Could navigate to detail view or full collection
-            Intent intent = new Intent(MainActivity.this, CollectionsActivity.class);
+            // Open detail activity
+            Intent intent = new Intent(MainActivity.this, AnimalDetailActivity.class);
+            intent.putExtra("CARD_ID", card.getCardId());
+            intent.putExtra("ANIMAL_CARD", (Parcelable) card);
             startActivity(intent);
         });
 
@@ -450,11 +452,13 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume() called - refreshing coins");
+        Log.d(TAG, "onResume() called - refreshing data");
+
         // Reload coins when returning to home screen (in case new card was saved)
         loadUserCoins();
-        // FIX: Reload data when returning to home screen
-        // loadHomeData();
+
+        // Reload home data to show newly saved cards
+        loadHomeData();
     }
 
     @Override
@@ -495,6 +499,4 @@ public class MainActivity extends BaseActivity {
 
         return animals;
     }
-
-
 }

@@ -140,17 +140,6 @@ public class AnimalDetailActivity extends BaseActivity {
         // Set title
         tvTitle.setText(animalCard.getAnimalName());
 
-        // Set coins earned
-//        int coins = animalCard.getCoinsEarned();
-//        if (coins <= 0) {
-//            // Calculate from conservation status if not stored
-//            coins = ConservationStatusMapper.getCoinsForFullText(animalCard.getConservation());
-//        }
-//        tvCoinsEarned.setText("+" + coins);
-
-        // Set collection date
-        // tvCollectionDate.setText(animalCard.getFormattedCollectionDate());
-
         // Load generated card image
         if (animalCard.getImageUrl() != null && !animalCard.getImageUrl().isEmpty()) {
             Glide.with(this)
@@ -363,36 +352,4 @@ public class AnimalDetailActivity extends BaseActivity {
                     .start();
         }
     }
-    //onbackpressed
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        finish();
-//        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
-//        //finish();
-//
-//
-//    }
-
-//    @Override
-//    public void onBackPressed() {
-//        // Smooth exit animation
-//        ObjectAnimator fadeOut = ObjectAnimator.ofFloat(scrollView, "alpha", 1f, 0f);
-//        fadeOut.setDuration(200);
-//        fadeOut.addListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                AnimalDetailActivity.super.onBackPressed();
-//            }
-//        });
-//        fadeOut.start();
-//    }
-
-    public String getFormattedCollectionDate() {
-//        Date date = new Date(timestamp);
-//        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-          return null;
-        // }//
-    }
-
 }
