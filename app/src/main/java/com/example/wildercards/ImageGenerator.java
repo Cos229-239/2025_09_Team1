@@ -1,16 +1,17 @@
 package com.example.wildercards;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -18,11 +19,14 @@ import java.net.URLEncoder;
 public class ImageGenerator {
     private static String lastGeneratedImageUrl = "";
 
+    public interface ImageGenerationCallback {
+        void onImageGenerated(String imageUrl, Drawable resource);
+        void onImageGenerationFailed();
+    }
+
     public static void generateAnimalImage(Context context,
                                            String animalName,
-                                           ImageView imageView,
-                                           ProgressBar progressBar,
-                                           TextView statusText) {
+                                           ImageGenerationCallback callback) {
         try {
             // Sanitize and normalize the animal name
             String sanitizedName = sanitizeAnimalName(animalName);
@@ -36,7 +40,6 @@ public class ImageGenerator {
             String encodedPrompt = URLEncoder.encode(hiddenPrompt, "UTF-8");
 
             // Add timestamp or random seed to force new generation each time
-            long timestamp = System.currentTimeMillis();
             String seed = String.valueOf((int)(Math.random() * 1000000));
 
             // Pollinations endpoint with seed parameter to generate different images
@@ -45,48 +48,44 @@ public class ImageGenerator {
 
             lastGeneratedImageUrl = url;
 
-            // Update UI
-            progressBar.setVisibility(View.VISIBLE);
-            imageView.setVisibility(View.GONE);
-            statusText.setText("Generating " + animalName + " in Pokémon style...");
-
             // Load with Glide with better error handling
             Glide.with(context)
                     .load(url)
                     .diskCacheStrategy(DiskCacheStrategy.NONE) // Don't cache
                     .skipMemoryCache(true) // Skip memory cache
                     .timeout(30000) // 30 second timeout
-                    .into(new com.bumptech.glide.request.target.ImageViewTarget<android.graphics.drawable.Drawable>(imageView) {
+                    .into(new CustomTarget<Drawable>() {
                         @Override
-                        protected void setResource(android.graphics.drawable.Drawable resource) {
-                            progressBar.setVisibility(View.GONE);
-                            imageView.setVisibility(View.VISIBLE);
-                            imageView.setImageDrawable(resource);
-                            statusText.setText("Generated successfully!");
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            if (callback != null) {
+                                callback.onImageGenerated(lastGeneratedImageUrl, resource);
+                            }
                         }
 
                         @Override
-                        public void onLoadFailed(android.graphics.drawable.Drawable errorDrawable) {
-                            super.onLoadFailed(errorDrawable);
+                        public void onLoadFailed(@Nullable Drawable errorDrawable) {
                             Log.e("ImageGenerator", "Failed to load image from: " + url);
-                            progressBar.setVisibility(View.GONE);
-                            imageView.setVisibility(View.VISIBLE);
-                            statusText.setText("Failed to generate. Tap to retry.");
                             Toast.makeText(context, "Could not generate " + animalName + ". Try again.", Toast.LENGTH_SHORT).show();
+                            if (callback != null) {
+                                callback.onImageGenerationFailed();
+                            }
+                        }
+
+                        @Override
+                        public void onLoadCleared(@Nullable Drawable placeholder) {
+                            // Not used
                         }
                     });
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-            progressBar.setVisibility(View.GONE);
-            statusText.setText("Encoding error occurred.");
             Toast.makeText(context, "Error encoding animal name", Toast.LENGTH_SHORT).show();
+            if (callback != null) {
+                callback.onImageGenerationFailed();
+            }
         }
     }
 
-    /**
-     * Sanitizes animal names to improve API consistency
-     */
     private static String sanitizeAnimalName(String name) {
         if (name == null || name.isEmpty()) {
             return "animal";

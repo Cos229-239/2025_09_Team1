@@ -7,6 +7,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -22,8 +23,6 @@ import android.widget.Toast;
 import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
-import com.example.wildercards.ImageGenerator;
-
 
 public class ConfirmCardActivity extends BaseActivity {
     private ImageView ivResult;
@@ -44,6 +43,8 @@ public class ConfirmCardActivity extends BaseActivity {
     private String currentAnimalName;
 
     private FirebaseHelper firebaseHelper;
+
+    private int loadingTasks = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,15 +87,41 @@ public class ConfirmCardActivity extends BaseActivity {
         tvAnimalName.setText(currentAnimalName);
         tvDescription.setText(currentDescription);
 
-        // Generate initial image
-        generateImage();
+        // Generate initial image and fetch data
+        startAllLoadingTasks();
 
         // Save button - with authentication check
         btnSave.setOnClickListener(v -> {
             saveCardToFirebase();
         });
+    }
 
-        // Fetch Wikipedia data in background
+    private void startAllLoadingTasks(){
+        generateImage();
+        fetchWikipediaData();
+    }
+
+    private synchronized void startLoading() {
+        loadingTasks++;
+        if (progressBar.getVisibility() != View.VISIBLE) {
+            progressBar.setVisibility(View.VISIBLE);
+            tvStatus.setVisibility(View.VISIBLE);
+            ivResult.setVisibility(View.GONE);
+        }
+    }
+
+    private synchronized void stopLoading() {
+        loadingTasks--;
+        if (loadingTasks <= 0) {
+            progressBar.setVisibility(View.GONE);
+            tvStatus.setVisibility(View.GONE);
+            ivResult.setVisibility(View.VISIBLE);
+            loadingTasks = 0; // Reset counter
+        }
+    }
+
+    private void fetchWikipediaData() {
+        startLoading();
         new Thread(() -> {
             AnimalInfo info = WikipediaFetcher.fetchAnimalInfo(currentAnimalName);
 
@@ -121,13 +148,11 @@ public class ConfirmCardActivity extends BaseActivity {
                 } else {
                     Toast.makeText(ConfirmCardActivity.this, "Failed to fetch animal info", Toast.LENGTH_SHORT).show();
                 }
+                stopLoading();
             });
         }).start();
     }
 
-    /**
-     * Check if user is authenticated, redirect to login if not
-     */
     private void checkUserAuthentication() {
         if (!firebaseHelper.isUserAuthenticated()) {
             Log.w(TAG, "User not authenticated, but allowing them to view. Save will prompt login.");
@@ -136,7 +161,22 @@ public class ConfirmCardActivity extends BaseActivity {
         }
     }
     private void generateImage() {
-        ImageGenerator.generateAnimalImage(this, currentAnimalName, ivResult, progressBar, tvStatus);
+        startLoading();
+        tvStatus.setText("Generating " + currentAnimalName + " in Pokémon style...");
+        ImageGenerator.generateAnimalImage(this, currentAnimalName, new ImageGenerator.ImageGenerationCallback() {
+            @Override
+            public void onImageGenerated(String imageUrl, Drawable resource) {
+                ivResult.setImageDrawable(resource);
+                tvStatus.setText("Generated successfully!");
+                stopLoading();
+            }
+
+            @Override
+            public void onImageGenerationFailed() {
+                tvStatus.setText("Failed to generate. Tap to retry.");
+                stopLoading();
+            }
+        });
     }
 
     // Set up the retry button
@@ -147,13 +187,7 @@ public class ConfirmCardActivity extends BaseActivity {
             public void onClick(View v) {
                 if (!currentAnimalName.isEmpty()) {
                     // Regenerate the image with the same animal name
-                    ImageGenerator.generateAnimalImage(
-                            ConfirmCardActivity.this,
-                            currentAnimalName,
-                            ivResult,
-                            progressBar,
-                            tvStatus
-                    );
+                    startAllLoadingTasks();
                 } else {
                     Toast.makeText(ConfirmCardActivity.this, "No animal to regenerate", Toast.LENGTH_SHORT).show();
                 }
