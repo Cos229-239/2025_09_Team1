@@ -13,298 +13,192 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- Header text -->
+        <!-- Header with Coins - Dark Theme -->
+        <LinearLayout
+            android:id="@+id/topBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="12dp"
+            android:background="#000000"
+            android:elevation="4dp">
+
+            <!-- Left side: Title -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvDiscoverTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🌿 Wild Explorer"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Catch 'em all!"
+                    android:textSize="12sp"
+                    android:textColor="#B0BEC5"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- Right side: Coins Display -->
+            <LinearLayout
+                android:id="@+id/coinsContainer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/coins_background"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:elevation="6dp">
+
+                <!-- Coin Icon -->
+                <ImageView
+                    android:id="@+id/ivCoinIcon"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_wildercoin"
+                    android:layout_marginEnd="8dp"
+                    android:contentDescription="WilderCoin" />
+
+                <!-- Coin Count -->
+                <TextView
+                    android:id="@+id/tvTotalCoins"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFD700"
+                    android:minWidth="40dp"
+                    android:gravity="end" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Featured Card Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="420dp"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+            <!-- Section Header -->
+            <TextView
+                android:id="@+id/topCardText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:text="⭐ Your Top Card"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Featured Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/topCard"
+                android:layout_width="match_parent"
+                android:layout_height="386dp"
+                android:layout_marginBottom="10dp"
+                app:cardBackgroundColor="#2C4A42"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="0dp">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="396dp">
+
+                    <ImageView
+                        android:id="@+id/topCardImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="388dp"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="Top card image"
+                        android:scaleType="fitCenter" />
+
+                    <TextView
+                        android:id="@+id/topCardPlaceholder"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="Your top card"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp" />
+                </FrameLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+
+        <!-- Top Cards Section -->
         <TextView
-            android:id="@+id/headerText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Discover Nature. Collect the Wild."
+            android:text="🔥 Top Cards"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"/>
 
-        <!-- Top card -->
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/topCard"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/animalsRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:layout_marginBottom="24dp"
-            app:cardCornerRadius="12dp"
-            app:cardBackgroundColor="@color/colorSecondary"
-            app:cardElevation="4dp"
-            app:strokeWidth="0dp">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:clipToPadding="false"
+            android:paddingStart="0dp"
+            android:paddingEnd="16dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Your top card"
-                android:textColor="@android:color/white"
-                android:textSize="18sp"/>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Top cards row title -->
+        <!-- Your Collection Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="10dp">
 
             <TextView
+                android:id="@+id/collections"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Top cards >"
+                android:text="🎒 Your Collections >"
                 android:textColor="@android:color/white"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold"/>
         </LinearLayout>
 
-        <!-- Top cards row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="24dp"
-            app:layout_constraintHorizontal_chainStyle="spread_inside">
-            <!-- Repeatable item -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="10dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeWidth="0dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="10dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeWidth="0dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="10dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeWidth="0dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:layout_margin="10dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:shapeAppearanceOverlay="@style/CircleImage"
-                    app:strokeWidth="0dp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Title"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-
-        </LinearLayout>
-
-        <!-- Your collections row title -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Your Collections >"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:textStyle="bold"/>
-        </LinearLayout>
-
-        <!-- Your Collections row -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:overScrollMode="never"
+            android:overScrollMode="ifContentScrolls"
             android:scrollbars="none">
 
             <LinearLayout
+                android:id="@+id/collectionsContainer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- Example collection card -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="120dp"
-                    android:layout_height="160dp"
-                    android:layout_marginEnd="8dp"
-                    app:cardCornerRadius="12dp"
-                    app:cardBackgroundColor="@color/colorSecondary"
-                    app:cardElevation="2dp"
-                    app:strokeWidth="0dp">
-
-
-
-
-                </com.google.android.material.card.MaterialCardView>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Brand"
-                    android:textColor="@android:color/white"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginLeft="2dp"
-                    android:textSize="10sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="Card name"
-                    android:textColor="@android:color/white"
-                    android:textSize="12sp"
-                    android:layout_marginLeft="2dp"/>
-            </LinearLayout>
-                <!-- Repeat more cards as needed -->
-
-                <!-- Example collection card -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="120dp"
-                        android:layout_height="160dp"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardBackgroundColor="@color/colorSecondary"
-                        app:cardElevation="2dp"
-                        app:strokeWidth="0dp">
-
-                    </com.google.android.material.card.MaterialCardView>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Brand"
-                        android:textColor="@android:color/white"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="2dp"
-                        android:textSize="10sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Card name"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:layout_marginLeft="2dp"/>
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="8dp">
-                    <com.google.android.material.card.MaterialCardView
-                        android:layout_width="120dp"
-                        android:layout_height="160dp"
-                        android:layout_marginEnd="8dp"
-                        app:cardCornerRadius="12dp"
-                        app:cardBackgroundColor="@color/colorSecondary"
-                        app:cardElevation="2dp"
-                        app:strokeWidth="0dp">
-
-                    </com.google.android.material.card.MaterialCardView>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Brand"
-                        android:textColor="@android:color/white"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginLeft="2dp"
-                        android:textSize="10sp"/>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Card name"
-                        android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:layout_marginLeft="2dp"/>
-                </LinearLayout>
-
-
-            </LinearLayout>
+                android:orientation="horizontal" />
         </HorizontalScrollView>
+
+        <!-- Bottom Padding -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="100dp" />
+
     </LinearLayout>
 </ScrollView>
