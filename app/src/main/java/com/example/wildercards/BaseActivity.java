@@ -47,10 +47,6 @@ public class BaseActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setLabelVisibilityMode(BottomNavigationView.LABEL_VISIBILITY_UNLABELED);
 
-        // bottomNavigationView.setLabelVisibilityMode(BottomNavigationView.LABEL_VISIBILITY_SELECTED);
-
-
-
 
         fabAdd = findViewById(R.id.nav_add);
         if (fabAdd != null) {
@@ -139,7 +135,7 @@ public class BaseActivity extends AppCompatActivity {
     private int getCurrentActivityPosition() {
         if (this instanceof MainActivity) {
             return 0;
-        } else if (this instanceof ConfirmCardActivity) {
+        } else if (this instanceof AddImageActivity) {
             return 1;
         } else if (this instanceof ProfileActivity) {
             return 2;
@@ -153,7 +149,7 @@ public class BaseActivity extends AppCompatActivity {
                 bottomNavigationView.setSelectedItemId(R.id.nav_home);
             } else if (this instanceof ProfileActivity) {
                 bottomNavigationView.setSelectedItemId(R.id.nav_profile);
-            } else if (this instanceof ConfirmCardActivity) {
+            } else if (this instanceof AddImageActivity) {
                 // Clear all bottom nav selections when on ConfirmCardActivity
                 bottomNavigationView.getMenu().setGroupCheckable(0, true, false);
                 for (int i = 0; i < bottomNavigationView.getMenu().size(); i++) {
@@ -165,7 +161,7 @@ public class BaseActivity extends AppCompatActivity {
 
         // CHANGED: Modern FAB highlight with glow effect
         if (fabAdd != null) {
-            if (this instanceof ConfirmCardActivity) {
+            if (this instanceof AddImageActivity) {
                 // Active FAB - full opacity with elevation
                 fabAdd.setAlpha(1.0f);
             } else {
